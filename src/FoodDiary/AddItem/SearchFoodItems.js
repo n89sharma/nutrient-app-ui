@@ -7,34 +7,25 @@ import Paper from '@material-ui/core/Paper'
 import MenuItem from '@material-ui/core/MenuItem'
 import Fuse from 'fuse.js';
 import { withStyles } from '@material-ui/core/styles';
+
 const styles = theme => ({
     suggestionsList: {
-      margin: 0,
-      padding: 0,
-      listStyleType: 'none',
+        margin: 0,
+        padding: 0,
+        listStyleType: 'none',
     }
-  });
-
-const suggestions = [
-    { label: 'Afghanistan' },
-    { label: 'Aland Islands' },
-    { label: 'Albania' },
-    { label: 'Algeria' },
-    { label: 'American Samoa' },
-    { label: 'Andorra' }
-];
+});
 
 const fuseOptions = {
+    threshold: 0.3,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 3,
     keys: [
-        'label'
+      "foodDescription"
     ]
 }
-const fuse = new Fuse(suggestions, fuseOptions);
-
-//teach autosuggest how to calculate suggestions
-const getSuggestions = value => {
-    return fuse.search(value);
-};
 
 //get the value from the suggestion
 const getSuggestionValue = suggestion => suggestion.label;
@@ -45,7 +36,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
         <MenuItem component="div">
             <div>
                 <span>
-                    {suggestion.label}
+                    {suggestion.foodDescription}
                 </span>
             </div>
         </MenuItem>
@@ -57,8 +48,7 @@ class SearchFoodItems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: '',
-            suggestions: []
+            value: ''
         }
 
         this.onChange = this.onChange.bind(this);
@@ -66,7 +56,15 @@ class SearchFoodItems extends React.Component {
         this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
         this.renderInputComponent = this.renderInputComponent.bind(this);
         this.renderSuggestionsContainer = this.renderSuggestionsContainer.bind(this);
+        this.fuse = new Fuse(this.props.foodItems, fuseOptions);
     }
+
+    
+
+    //teach autosuggest how to calculate suggestions
+    getSuggestions = value => {
+        return this.fuse.search(value).slice[1,10];
+    };
 
     onChange = (event, { newValue }) => {
         this.setState({
@@ -76,7 +74,7 @@ class SearchFoodItems extends React.Component {
 
     onSuggestionsFetchRequested = ({ value }) => {
         this.setState({
-            suggestions: getSuggestions(value)
+            suggestions: this.getSuggestions(value)
         });
     };
 
@@ -85,7 +83,7 @@ class SearchFoodItems extends React.Component {
     };
 
     renderInputComponent(props) {
-        const { inputRef = () => {}, ref, ...other } = props;
+        const { inputRef = () => { }, ref, ...other } = props;
 
         return (
             <TextField
@@ -93,7 +91,7 @@ class SearchFoodItems extends React.Component {
                     inputRef: node => {
                         ref(node);
                         inputRef(node);
-                      }
+                    }
                 }}
                 {...other}
             />
@@ -112,8 +110,8 @@ class SearchFoodItems extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
-        const { value, suggestions } = this.state;
+        const { foodItems, classes } = this.props;
+        const { value } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
             value: value,
@@ -126,7 +124,7 @@ class SearchFoodItems extends React.Component {
         return (
             <Autosuggest
                 renderInputComponent={this.renderInputComponent}
-                suggestions={suggestions}
+                suggestions={foodItems}
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
                 getSuggestionValue={getSuggestionValue}
