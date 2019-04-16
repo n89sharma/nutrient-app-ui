@@ -5,8 +5,15 @@ import parse from 'autosuggest-highlight/parse';
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
 import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
 import Fuse from 'fuse.js';
+import { withStyles } from '@material-ui/core/styles';
+const styles = theme => ({
+    suggestionsList: {
+      margin: 0,
+      padding: 0,
+      listStyleType: 'none',
+    }
+  });
 
 const suggestions = [
     { label: 'Afghanistan' },
@@ -35,35 +42,14 @@ const getSuggestionValue = suggestion => suggestion.label;
 //render suggestion
 function renderSuggestion(suggestion, { query, isHighlighted }) {
     return (
-        <MenuItem
-            key={suggestion.label}
-        >
-            {suggestion.label}
+        <MenuItem component="div">
+            <div>
+                <span>
+                    {suggestion.label}
+                </span>
+            </div>
         </MenuItem>
     );
-}
-
-
-
-function InputComponent(props) {
-    return (
-        <TextField
-            onChange={props.onChange}
-        />
-    );
-}
-
-function renderSuggestionsContainer({ containerProps , children, query }) {
-
-    return (
-        <Menu
-            open={!!children}
-            anchorEl={this.inputNode}
-            {...containerProps}
-        >
-            {children}
-        </Menu>
-    )
 }
 
 class SearchFoodItems extends React.Component {
@@ -74,46 +60,83 @@ class SearchFoodItems extends React.Component {
             value: '',
             suggestions: []
         }
+
+        this.onChange = this.onChange.bind(this);
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.renderInputComponent = this.renderInputComponent.bind(this);
+        this.renderSuggestionsContainer = this.renderSuggestionsContainer.bind(this);
     }
 
     onChange = (event, { newValue }) => {
-        this.setState({ value: newValue });
+        this.setState({
+            value: newValue
+        });
     };
 
     onSuggestionsFetchRequested = ({ value }) => {
-        this.setState({ suggestions: getSuggestions(value) });
+        this.setState({
+            suggestions: getSuggestions(value)
+        });
     };
 
     onSuggestionsClearRequested = () => {
         this.setState({ suggestions: [] });
     };
 
+    renderInputComponent(props) {
+        const { inputRef = () => {}, ref, ...other } = props;
+
+        return (
+            <TextField
+                InputProps={{
+                    inputRef: node => {
+                        ref(node);
+                        inputRef(node);
+                      }
+                }}
+                {...other}
+            />
+        );
+    }
+
+    renderSuggestionsContainer({ containerProps, children, query }) {
+        return (
+            <Paper
+                open={!!children}
+                {...containerProps}
+            >
+                {children}
+            </Paper>
+        )
+    }
+
     render() {
+        const { classes } = this.props;
         const { value, suggestions } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
             value: value,
-            onChange: this.onChange,
-            inputRef: node => {
-                this.inputNode = node;
-            }
+            onChange: this.onChange
         }
-        console.log(renderSuggestion);
+        const theme = {
+            suggestionsList: classes.suggestionsList
+        }
 
         return (
             <Autosuggest
-                renderInputComponent={InputComponent}
+                renderInputComponent={this.renderInputComponent}
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
                 getSuggestionValue={getSuggestionValue}
                 renderSuggestion={renderSuggestion}
-                alwaysRenderSuggestions={true}
                 inputProps={inputProps}
-                renderSuggestionsContainer={renderSuggestionsContainer}
+                theme={theme}
+                renderSuggestionsContainer={this.renderSuggestionsContainer}
             />
         )
     }
 }
 
-export default SearchFoodItems;
+export default withStyles(styles)(SearchFoodItems);
