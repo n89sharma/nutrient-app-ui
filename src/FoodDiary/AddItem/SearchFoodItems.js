@@ -82,9 +82,13 @@ class SearchFoodItems extends React.Component {
         this.setState({ suggestions: [] });
     };
 
+    onSuggestionSelected = (event, args) => {
+        const { suggestion, ...other} = args;
+        this.props.onFoodItemSelection(suggestion);
+    }
+
     renderInputComponent(props) {
         const { inputRef = () => { }, ref, ...other } = props;
-
         return (
             <TextField
                 InputProps={{
@@ -128,6 +132,7 @@ class SearchFoodItems extends React.Component {
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
                 getSuggestionValue={getSuggestionValue}
+                onSuggestionSelected={this.onSuggestionSelected}
                 renderSuggestion={renderSuggestion}
                 inputProps={inputProps}
                 theme={theme}

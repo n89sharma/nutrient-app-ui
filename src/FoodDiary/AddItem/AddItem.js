@@ -22,7 +22,8 @@ class AddItem extends React.Component {
       },
       isLoading: true,
       errors: null,
-      foodItems: []
+      foodItems: [],
+      selectedFoodItem: {}
     };
   }
 
@@ -66,8 +67,13 @@ class AddItem extends React.Component {
     this.setState({ selectedMeals: selectedMeals });
   }
 
+  handleFoodItemSelection = selectedFoodItem => {
+    this.setState({ selectedFoodItem: selectedFoodItem });
+    console.log(selectedFoodItem);
+  }
+
   render() {
-    const selectedMeals = this.state.selectedMeals;
+    const { selectedMeals, addItemDialogVisible, foodItems } = this.state;
     return (
       <div>
 
@@ -78,7 +84,7 @@ class AddItem extends React.Component {
         <Dialog
           fullWidth={true}
           maxWidth="md"
-          open={this.state.addItemDialogVisible}
+          open={addItemDialogVisible}
           onClose={this.handleDialogClose}
         >
 
@@ -87,7 +93,10 @@ class AddItem extends React.Component {
             onMealChange={this.handleMealChange}
           />
 
-          <SearchFoodItems foodItems={this.state.foodItems} />
+          <SearchFoodItems
+            foodItems={foodItems}
+            onFoodItemSelection={this.handleFoodItemSelection}
+          />
 
           <Button onClick={this.handleDialogAdd}>
             Add
