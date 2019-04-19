@@ -17,18 +17,19 @@ const styles = theme => ({
 });
 
 const fuseOptions = {
+    shouldSort: true,
     threshold: 0.3,
     location: 0,
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 3,
     keys: [
-      "foodDescription"
+        "foodDescription"
     ]
 }
 
 //get the value from the suggestion
-const getSuggestionValue = suggestion => suggestion.label;
+const getSuggestionValue = suggestion => suggestion.foodDescription;
 
 //render suggestion
 function renderSuggestion(suggestion, { query, isHighlighted }) {
@@ -48,7 +49,8 @@ class SearchFoodItems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: ''
+            value: '',
+            suggestions: []
         }
 
         this.onChange = this.onChange.bind(this);
@@ -59,17 +61,15 @@ class SearchFoodItems extends React.Component {
         this.fuse = new Fuse(this.props.foodItems, fuseOptions);
     }
 
-    
-
-    //teach autosuggest how to calculate suggestions
-    getSuggestions = value => {
-        return this.fuse.search(value).slice[1,10];
-    };
-
     onChange = (event, { newValue }) => {
         this.setState({
             value: newValue
         });
+    };
+
+    //teach autosuggest how to calculate suggestions
+    getSuggestions = value => {
+        return this.fuse.search(value);
     };
 
     onSuggestionsFetchRequested = ({ value }) => {
@@ -111,7 +111,7 @@ class SearchFoodItems extends React.Component {
 
     render() {
         const { foodItems, classes } = this.props;
-        const { value } = this.state;
+        const { value, suggestions } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
             value: value,
@@ -124,7 +124,7 @@ class SearchFoodItems extends React.Component {
         return (
             <Autosuggest
                 renderInputComponent={this.renderInputComponent}
-                suggestions={foodItems}
+                suggestions={suggestions.slice(0,5) }
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
                 getSuggestionValue={getSuggestionValue}
