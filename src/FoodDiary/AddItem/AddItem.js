@@ -5,6 +5,7 @@ import MealSelection from './MealSelection';
 import { meals } from '../../Utils/Constants';
 import SearchFoodItems from './SearchFoodItems';
 import axios from 'axios';
+import SelectMeasure from './SelectMeasure';
 
 class AddItem extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class AddItem extends React.Component {
 
   getFoodItems() {
     axios
-      .get("http://localhost:8080/food")
+      .get('http://localhost:8080/food')
       .then(response => {
         console.log('loaded items');
         this.setState({
@@ -73,7 +74,12 @@ class AddItem extends React.Component {
   }
 
   render() {
-    const { selectedMeals, addItemDialogVisible, foodItems } = this.state;
+    const {
+      selectedMeals,
+      addItemDialogVisible,
+      foodItems,
+      selectedFoodItem } = this.state;
+
     return (
       <div>
 
@@ -96,6 +102,10 @@ class AddItem extends React.Component {
           <SearchFoodItems
             foodItems={foodItems}
             onFoodItemSelection={this.handleFoodItemSelection}
+          />
+
+          <SelectMeasure
+            selectedFoodItem={selectedFoodItem}
           />
 
           <Button onClick={this.handleDialogAdd}>
