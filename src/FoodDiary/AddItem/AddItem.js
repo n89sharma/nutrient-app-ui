@@ -13,6 +13,8 @@ class AddItem extends React.Component {
     this.handleDialogOpen = this.handleDialogOpen.bind(this);
     this.handleDialogAdd = this.handleDialogAdd.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
+    this.handleMeasureSelection = this.handleMeasureSelection.bind(this);
+    this.getMeasure = this.getMeasure.bind(this);
     this.state = {
       addItemDialogVisible: false,
       selectedMeals: {
@@ -24,7 +26,9 @@ class AddItem extends React.Component {
       isLoading: true,
       errors: null,
       foodItems: [],
-      selectedFoodItem: {}
+      selectedFoodItem: {},
+      measures: [],
+      selectedMeasure: {}
     };
   }
 
@@ -47,8 +51,29 @@ class AddItem extends React.Component {
       });
   }
 
+  getMeasure(selectedFoodItem) {
+    console.log('requesting measure');
+    const foodId = selectedFoodItem.foodId;
+    axios
+     .get(`http://localhost:8080/food/${foodId}/measure`)
+     .then(response => {
+       this.setState({
+         selectedFoodItem: selectedFoodItem,
+         measures: response.data
+        });
+        console.log('measures loaded');
+     })
+     .catch(error => {
+       console.log(error);
+     })
+     .then(() => {
+       this.setState({
+         isLoading: false
+       });
+     })
+  }
+
   componentDidMount() {
-    console.log('trying to load');
     this.getFoodItems();
   }
 
@@ -69,8 +94,12 @@ class AddItem extends React.Component {
   }
 
   handleFoodItemSelection = selectedFoodItem => {
-    this.setState({ selectedFoodItem: selectedFoodItem });
-    console.log(selectedFoodItem);
+    this.getMeasure(selectedFoodItem);
+  }
+
+  handleMeasureSelection = selectedMeasure => {
+    console.log(selectedMeasure);
+    this.setState({ selectedMeasure: selectedMeasure });
   }
 
   render() {
@@ -78,7 +107,8 @@ class AddItem extends React.Component {
       selectedMeals,
       addItemDialogVisible,
       foodItems,
-      selectedFoodItem } = this.state;
+      selectedFoodItem,
+      measures } = this.state;
 
     return (
       <div>
@@ -105,7 +135,8 @@ class AddItem extends React.Component {
           />
 
           <SelectMeasure
-            selectedFoodItem={selectedFoodItem}
+            measures={measures}
+            onMeasureSelection={this.handleMeasureSelection}
           />
 
           <Button onClick={this.handleDialogAdd}>

@@ -1,43 +1,51 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import axios from 'axios';
+import TextField from '@material-ui/core/TextField';
 
 class SelectMeasure extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      measureOptions: [],
-      isLoading: false
+      measureMenuVisible: false,
+      selectedMeasureName: ''
     };
-    this.setMeasureOptions(this.props.foodId);
+    this.handleMeasureSelection = this.handleMeasureSelection.bind(this);
   }
 
-  setMeasureOptions = (foodId) => {
-    axios
-     .get(`http://localhost:8080/food/${foodId}/measure`)
-     .then(response => {
-       this.setState({
-         measureOptions: response.data.map(measureData => measureData.measureName)
-        });
-     })
-     .catch(error => {
-       console.log(error);
-     })
-     .then(() => {
-       this.setState({
-         isLoading: false
-       });
-     })
+  renderMeasureMenuOption(measure) {
+    return (
+      <MenuItem
+        key={measure.measureName}
+        value={measure.measureName}
+      >
+        {measure.measureName}
+      </MenuItem>
+    );
+  }
+
+  handleMeasureSelection = event => {
+    const selectedMeasureName = event.target.value;
+    const selectedMeasure = this.props.measures
+      .find(measure => measure.measureName == selectedMeasureName );
+    this.setState({selectedMeasureName: selectedMeasureName});
+    this.props.onMeasureSelection(selectedMeasure);
   }
 
   render() {
+    const { selectedMeasureName } = this.state;
+    const { measures } = this.props;
     return (
       <div>
-        <Button>
-          Select Measure...
-        </Button>
+        <TextField
+          select
+          value={ selectedMeasureName }
+          label='Select Measure'
+          onChange={this.handleMeasureSelection}
+        >
+          {
+            measures.map(measure => this.renderMeasureMenuOption(measure))
+          }
+        </TextField>
       </div>
     );
   }
