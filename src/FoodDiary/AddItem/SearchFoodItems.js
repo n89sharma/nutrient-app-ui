@@ -119,7 +119,8 @@ class SearchFoodItems extends React.Component {
         const inputProps = {
             placeholder: 'Search a food item',
             value: value,
-            onChange: this.onChange
+            onChange: this.onChange,
+            label: 'Search'
         }
         const theme = {
             suggestionsList: classes.suggestionsList

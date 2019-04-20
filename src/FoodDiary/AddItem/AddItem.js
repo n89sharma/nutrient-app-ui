@@ -1,11 +1,15 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import MealSelection from './MealSelection';
 import { meals } from '../../Utils/Constants';
 import SearchFoodItems from './SearchFoodItems';
 import axios from 'axios';
 import SelectMeasure from './SelectMeasure';
+import Grid from '@material-ui/core/Grid';
 
 class AddItem extends React.Component {
   constructor(props) {
@@ -55,22 +59,22 @@ class AddItem extends React.Component {
     console.log('requesting measure');
     const foodId = selectedFoodItem.foodId;
     axios
-     .get(`http://localhost:8080/food/${foodId}/measure`)
-     .then(response => {
-       this.setState({
-         selectedFoodItem: selectedFoodItem,
-         measures: response.data
+      .get(`http://localhost:8080/food/${foodId}/measure`)
+      .then(response => {
+        this.setState({
+          selectedFoodItem: selectedFoodItem,
+          measures: response.data
         });
         console.log('measures loaded');
-     })
-     .catch(error => {
-       console.log(error);
-     })
-     .then(() => {
-       this.setState({
-         isLoading: false
-       });
-     })
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(() => {
+        this.setState({
+          isLoading: false
+        });
+      })
   }
 
   componentDidMount() {
@@ -112,7 +116,6 @@ class AddItem extends React.Component {
 
     return (
       <div>
-
         <Button onClick={this.handleDialogOpen}>
           Add Item
         </Button>
@@ -123,29 +126,46 @@ class AddItem extends React.Component {
           open={addItemDialogVisible}
           onClose={this.handleDialogClose}
         >
+          <DialogTitle>
+            Add Item
+          </DialogTitle>
+          <DialogContent>
 
-          <MealSelection
-            selectedMeals={selectedMeals}
-            onMealChange={this.handleMealChange}
-          />
+            <Grid container spacing={24}>
+              <Grid item>
+                <MealSelection
+                  selectedMeals={selectedMeals}
+                  onMealChange={this.handleMealChange}
+                />
+              </Grid>
+              <Grid item>
+                <SearchFoodItems
+                  foodItems={foodItems}
+                  onFoodItemSelection={this.handleFoodItemSelection}
+                />
+              </Grid>
+              <Grid item>
+                <SelectMeasure
+                  measures={measures}
+                  onMeasureSelection={this.handleMeasureSelection}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
 
-          <SearchFoodItems
-            foodItems={foodItems}
-            onFoodItemSelection={this.handleFoodItemSelection}
-          />
-
-          <SelectMeasure
-            measures={measures}
-            onMeasureSelection={this.handleMeasureSelection}
-          />
-
-          <Button onClick={this.handleDialogAdd}>
-            Add
-          </Button>
-
-          <Button onClick={this.handleDialogClose}>
-            Cancel
-          </Button>
+          <DialogActions>
+            <Button
+              color='primary'
+              variant='contained'
+              onClick={this.handleDialogAdd}>
+              Add
+            </Button>
+            <Button
+              variant='contained'
+              onClick={this.handleDialogClose}>
+              Cancel
+            </Button>
+          </DialogActions>
 
         </Dialog>
 

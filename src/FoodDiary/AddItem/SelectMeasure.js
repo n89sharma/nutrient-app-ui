@@ -41,6 +41,7 @@ class SelectMeasure extends React.Component {
           value={ selectedMeasureName }
           label='Select Measure'
           onChange={this.handleMeasureSelection}
+          style={{width:200}}
         >
           {
             measures.map(measure => this.renderMeasureMenuOption(measure))
