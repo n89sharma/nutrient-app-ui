@@ -6,15 +6,49 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import { meals } from '../Utils/Constants';
 
 class FoodTable extends React.Component {
   constructor(props) {
     super(props);
   }
 
-  render() {
+  renderMealLabelAndFoodItemsForMeal = meal => {
+    const { foodItems } = this.props;
+    return (
+      <React.Fragment key={meal}>
+        <TableRow>
+          <TableCell rowSpan={foodItems[meal].length + 1}>{meal}</TableCell>
+        </TableRow>
+        {this.renderFoodItemsForMeal(meal)}
+      </React.Fragment>
+    );
+  }
+
+  renderFoodItemsForMeal = meal => {
     const { foodItems, handleFoodItemDeletion } = this.props;
-    console.log(foodItems);
+    return (
+      foodItems[meal].map(foodItem =>
+        <React.Fragment key={foodItem.foodId + meal}>
+          <TableRow>
+            <TableCell>{foodItem.foodDescription}</TableCell>
+            <TableCell>{foodItem.calories}</TableCell>
+            <TableCell>{foodItem.macroNutrients.carbohydrates.amountValue}</TableCell>
+            <TableCell>{foodItem.macroNutrients.fats.amountValue}</TableCell>
+            <TableCell>{foodItem.macroNutrients.sugars.amountValue}</TableCell>
+            <TableCell>
+              <IconButton
+                onClick={() => handleFoodItemDeletion(foodItem.foodId, meal)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        </React.Fragment>
+      ));
+  }
+
+  render() {
     return (
       <div>
         <Table
@@ -36,28 +70,10 @@ class FoodTable extends React.Component {
           </TableHead>
 
           <TableBody>
-            {
-              foodItems.map(foodItem =>
-                <React.Fragment key={foodItem.foodId}>
-                  <TableRow>
-                    <TableCell>Meal</TableCell>
-                    <TableCell>{foodItem.foodDescription}</TableCell>
-                    <TableCell>{foodItem.calories}</TableCell>
-                    <TableCell>{foodItem.macroNutrients.carbohydrates.amountValue}</TableCell>
-                    <TableCell>{foodItem.macroNutrients.fats.amountValue}</TableCell>
-                    <TableCell>{foodItem.macroNutrients.sugars.amountValue}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleFoodItemDeletion(foodItem.foodId)}
-                      >
-                        <DeleteIcon/>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                </React.Fragment>
-              )
-            }
-
+            {this.renderMealLabelAndFoodItemsForMeal(meals.BREAKFAST)}
+            {this.renderMealLabelAndFoodItemsForMeal(meals.LUNCH)}
+            {this.renderMealLabelAndFoodItemsForMeal(meals.DINNER)}
+            {this.renderMealLabelAndFoodItemsForMeal(meals.OTHER)}
           </TableBody>
 
         </Table>

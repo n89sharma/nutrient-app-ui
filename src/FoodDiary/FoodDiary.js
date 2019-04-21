@@ -5,6 +5,14 @@ import FoodTable from './FoodTable'
 import { meals } from '../Utils/Constants'
 import axios from 'axios';
 
+class TableFoodItem {
+  constructor(selectedMeals, selectedFoodItem, selectedMeasure) {
+    this.meals = selectedMeals;
+    this.foodItem = selectedFoodItem;
+    this.measure = selectedMeasure;
+  }
+}
+
 class FoodDiary extends React.Component {
 
   constructor(props) {
@@ -13,43 +21,46 @@ class FoodDiary extends React.Component {
     this.handleFoodItemAddition = this.handleFoodItemAddition.bind(this);
     this.state = {
       date: new Date(),
-      foodItems: []
-      // [meals.BREAKFAST]: [],
-      // [meals.LUNCH]: [],
-      // [meals.DINNER]: [],
-      // [meals.OTHER]: []
+      foodItems: {
+        [meals.BREAKFAST]: [],
+        [meals.LUNCH]: [],
+        [meals.DINNER]: [],
+        [meals.OTHER]: []
+      }
     };
   }
 
   handleDateChange = date => {
-    this.setState({date: date});
+    this.setState({ date: date });
   }
 
-  handleFoodItemAddition = (selectedMeals, selectedFoodItem, selectedMeasure) => {
-    const newFoodItems = this.state.foodItems.slice();
-    const foodId = selectedFoodItem.foodId;
+  handleFoodItemAddition = (mealsForFoodItem, selectedFoodItem, selectedMeasure) => {
+    const selectedMeals = Object.keys(mealsForFoodItem).filter(key => mealsForFoodItem[key]);
     axios
-      .get(`http://localhost:8080/food/${foodId}`)
+      .get(`http://localhost:8080/food/${selectedFoodItem.foodId}`)
       .then(response => {
-        newFoodItems.push(response.data);
+        const newFoodItem = response.data;
+        let newFoodItems = Object.assign(this.state.foodItems);
+        selectedMeals.forEach(meal => newFoodItems[meal].push(newFoodItem));
         this.setState({
-          foodItems: newFoodItems
+          foodItems:newFoodItems
         });
       })
       .then();
   }
 
-  handleFoodItemDeletion = foodId => {
-    const newFoodItems = this.state.foodItems.slice().filter(foodItem => foodItem.foodId != foodId);
-    this.setState({foodItems: newFoodItems});
+  handleFoodItemDeletion = (foodId, meal) => {
+    let newFoodItems = Object.assign(this.state.foodItems);
+    newFoodItems[meal] = newFoodItems[meal].filter(foodItem => foodItem.foodId != foodId);
+    this.setState({ foodItems: newFoodItems });
   }
 
   render() {
     const { date, foodItems } = this.state;
-    return(
+    return (
       <div>
         <CustomDatePicker
-          date = {date}
+          date={date}
           onDateChange={this.handleDateChange}
         />
         <AddItem
