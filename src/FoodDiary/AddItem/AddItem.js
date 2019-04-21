@@ -82,7 +82,15 @@ class AddItem extends React.Component {
   }
 
   handleDialogOpen = () => {
-    this.setState({ addItemDialogVisible: true });
+    this.setState({
+      addItemDialogVisible: true,
+      selectedMeals: {
+        [meals.BREAKFAST]: false,
+        [meals.LUNCH]: false,
+        [meals.DINNER]: false,
+        [meals.OTHER]: false
+      }
+    });
   };
 
   handleDialogClose = () => {
@@ -93,7 +101,7 @@ class AddItem extends React.Component {
     this.setState({ addItemDialogVisible: false });
   }
 
-  handleMealChange = (selectedMeals) => {
+  handleMealChange = selectedMeals => {
     this.setState({ selectedMeals: selectedMeals });
   }
 
@@ -102,7 +110,6 @@ class AddItem extends React.Component {
   }
 
   handleMeasureSelection = selectedMeasure => {
-    console.log(selectedMeasure);
     this.setState({ selectedMeasure: selectedMeasure });
   }
 
@@ -113,6 +120,8 @@ class AddItem extends React.Component {
       foodItems,
       selectedFoodItem,
       measures } = this.state;
+
+    const { handleFoodItemAddition } = this.props;
 
     return (
       <div>
@@ -157,7 +166,13 @@ class AddItem extends React.Component {
             <Button
               color='primary'
               variant='contained'
-              onClick={this.handleDialogAdd}>
+              onClick={() => {
+                this.handleDialogClose();
+                handleFoodItemAddition(
+                  this.state.selectedMeals,
+                  this.state.selectedFoodItem,
+                  this.state.selectedMeasure);
+                }}>
               Add
             </Button>
             <Button
