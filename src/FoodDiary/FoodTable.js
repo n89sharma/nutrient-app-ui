@@ -48,6 +48,31 @@ class FoodTable extends React.Component {
       ));
   }
 
+  renderTotals = () => {
+    const { foodItems } = this.props;
+    const allFoodItems = [].concat(
+      foodItems[meals.BREAKFAST],
+      foodItems[meals.LUNCH],
+      foodItems[meals.DINNER],
+      foodItems[meals.OTHER]
+      );
+    const calorieTotal = allFoodItems.reduce((total, item) => total + item.calories, 0);
+    const carbohydratesTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.carbohydrates.amountValue, 0);
+    const fatsTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.fats.amountValue, 0);
+    const proteinTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.protein.amountValue, 0);
+    return (
+      <React.Fragment key='totals'>
+        <TableRow>
+          <TableCell colSpan={2}>Total</TableCell>
+          <TableCell>{calorieTotal}</TableCell>
+          <TableCell>{carbohydratesTotal}</TableCell>
+          <TableCell>{fatsTotal}</TableCell>
+          <TableCell>{proteinTotal}</TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -74,6 +99,7 @@ class FoodTable extends React.Component {
             {this.renderMealLabelAndFoodItemsForMeal(meals.LUNCH)}
             {this.renderMealLabelAndFoodItemsForMeal(meals.DINNER)}
             {this.renderMealLabelAndFoodItemsForMeal(meals.OTHER)}
+            {this.renderTotals()}
           </TableBody>
 
         </Table>
