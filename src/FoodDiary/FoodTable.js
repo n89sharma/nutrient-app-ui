@@ -35,7 +35,7 @@ class FoodTable extends React.Component {
             <TableCell>{foodItem.calories}</TableCell>
             <TableCell>{foodItem.macroNutrients.carbohydrates.amountValue}</TableCell>
             <TableCell>{foodItem.macroNutrients.fats.amountValue}</TableCell>
-            <TableCell>{foodItem.macroNutrients.sugars.amountValue}</TableCell>
+            <TableCell>{foodItem.macroNutrients.protein.amountValue}</TableCell>
             <TableCell>
               <IconButton
                 onClick={() => handleFoodItemDeletion(foodItem.foodId, meal)}

@@ -125,7 +125,10 @@ class AddItem extends React.Component {
 
     return (
       <div>
-        <Button onClick={this.handleDialogOpen}>
+        <Button 
+          color='primary'
+          variant='contained'
+          onClick={this.handleDialogOpen}>
           Add Item
         </Button>
 

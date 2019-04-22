@@ -4,14 +4,7 @@ import AddItem from './AddItem/AddItem'
 import FoodTable from './FoodTable'
 import { meals } from '../Utils/Constants'
 import axios from 'axios';
-
-class TableFoodItem {
-  constructor(selectedMeals, selectedFoodItem, selectedMeasure) {
-    this.meals = selectedMeals;
-    this.foodItem = selectedFoodItem;
-    this.measure = selectedMeasure;
-  }
-}
+import Grid from '@material-ui/core/Grid';
 
 class FoodDiary extends React.Component {
 
@@ -39,11 +32,16 @@ class FoodDiary extends React.Component {
     axios
       .get(`http://localhost:8080/food/${selectedFoodItem.foodId}`)
       .then(response => {
+        // TODO: backend should multiply selected measure and the food item 
+        // information.
+        console.log(selectedMeasure);
+        console.log(selectedFoodItem);
+        console.log(response.data);
         const newFoodItem = response.data;
         let newFoodItems = Object.assign(this.state.foodItems);
         selectedMeals.forEach(meal => newFoodItems[meal].push(newFoodItem));
         this.setState({
-          foodItems:newFoodItems
+          foodItems: newFoodItems
         });
       })
       .then();
@@ -59,17 +57,34 @@ class FoodDiary extends React.Component {
     const { date, foodItems } = this.state;
     return (
       <div>
-        <CustomDatePicker
-          date={date}
-          onDateChange={this.handleDateChange}
-        />
-        <AddItem
-          handleFoodItemAddition={this.handleFoodItemAddition}
-        />
-        <FoodTable
-          foodItems={foodItems}
-          handleFoodItemDeletion={this.handleFoodItemDeletion}
-        />
+        <Grid container spacing={24}>
+
+          <Grid item>
+            <CustomDatePicker
+              date={date}
+              onDateChange={this.handleDateChange}
+            />
+          </Grid>
+
+          <Grid item>
+            <AddItem
+              handleFoodItemAddition={this.handleFoodItemAddition}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={24}>
+          <Grid item>
+            <FoodTable
+              foodItems={foodItems}
+              handleFoodItemDeletion={this.handleFoodItemDeletion}
+            />
+          </Grid>
+
+        </Grid>
+
+
+
       </div>
     );
   }
