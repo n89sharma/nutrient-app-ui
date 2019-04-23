@@ -10,14 +10,17 @@ import SearchFoodItems from './SearchFoodItems';
 import axios from 'axios';
 import SelectMeasure from './SelectMeasure';
 import Grid from '@material-ui/core/Grid';
+import Checkbox from '@material-ui/core/Checkbox';
 
 class AddItem extends React.Component {
   constructor(props) {
     super(props)
+    this.clearUserSelection = this.clearUserSelection.bind(this);
     this.handleDialogOpen = this.handleDialogOpen.bind(this);
     this.handleDialogAdd = this.handleDialogAdd.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleMeasureSelection = this.handleMeasureSelection.bind(this);
+    this.handleAddAnotherItem = this.handleAddAnotherItem.bind(this);
     this.getMeasure = this.getMeasure.bind(this);
     this.state = {
       addItemDialogVisible: false,
@@ -32,7 +35,9 @@ class AddItem extends React.Component {
       foodItems: [],
       selectedFoodItem: {},
       measures: [],
-      selectedMeasure: {}
+      selectedMeasure: {},
+      addAnotherItem: false,
+      selectedServing: ''
     };
   }
 
@@ -81,24 +86,39 @@ class AddItem extends React.Component {
     this.getFoodItems();
   }
 
-  handleDialogOpen = () => {
+  clearUserSelection = () => {
     this.setState({
-      addItemDialogVisible: true,
       selectedMeals: {
         [meals.BREAKFAST]: false,
         [meals.LUNCH]: false,
         [meals.DINNER]: false,
         [meals.OTHER]: false
-      }
+      },
+      selectedFoodItem: {},
+      selectedMeasure: {},
+      selectedServing: ''
     });
   };
+
+  handleDialogOpen = () => {
+    this.clearUserSelection();
+    this.setState({ addItemDialogVisible: true });
+  }
 
   handleDialogClose = () => {
     this.setState({ addItemDialogVisible: false });
   };
 
   handleDialogAdd = () => {
-    this.setState({ addItemDialogVisible: false });
+    if (!this.state.addAnotherItem) {
+      this.setState({ addItemDialogVisible: false });
+    }
+    this.props.handleFoodItemAddition(
+      this.state.selectedMeals,
+      this.state.selectedFoodItem,
+      this.state.selectedMeasure,
+      this.state.selectedServing)
+    this.clearUserSelection();
   }
 
   handleMealChange = selectedMeals => {
@@ -113,15 +133,17 @@ class AddItem extends React.Component {
     this.setState({ selectedMeasure: selectedMeasure });
   }
 
+  handleAddAnotherItem = () => {
+    this.setState({addAnotherItem: !this.state.addAnotherItem})
+  }
+
   render() {
     const {
       selectedMeals,
       addItemDialogVisible,
       foodItems,
-      selectedFoodItem,
-      measures } = this.state;
-
-    const { handleFoodItemAddition } = this.props;
+      measures,
+      addAnotherItem } = this.state;
 
     return (
       <div>
@@ -166,16 +188,17 @@ class AddItem extends React.Component {
           </DialogContent>
 
           <DialogActions>
+            <Checkbox
+              checked={addAnotherItem}
+              value={'Add another item'}
+              onChange={this.handleAddAnotherItem}
+            >
+
+            </Checkbox>
             <Button
               color='primary'
               variant='contained'
-              onClick={() => {
-                this.handleDialogClose();
-                handleFoodItemAddition(
-                  this.state.selectedMeals,
-                  this.state.selectedFoodItem,
-                  this.state.selectedMeasure);
-                }}>
+              onClick={this.handleDialogAdd}>
               Add
             </Button>
             <Button

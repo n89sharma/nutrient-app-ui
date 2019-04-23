@@ -9,8 +9,8 @@ export const componentNames = {
 }
 
 export const meals = {
-  BREAKFAST : 'breakfast',
-  LUNCH : 'lunch',
-  DINNER : 'dinner',
-  OTHER : 'other',
+  BREAKFAST : 'Breakfast',
+  LUNCH : 'Lunch',
+  DINNER : 'Dinner',
+  OTHER : 'Other',
 }
