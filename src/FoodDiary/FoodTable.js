@@ -56,10 +56,12 @@ class FoodTable extends React.Component {
       foodItems[meals.DINNER],
       foodItems[meals.OTHER]
       );
-    const calorieTotal = allFoodItems.reduce((total, item) => total + item.calories, 0);
-    const carbohydratesTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.carbohydrates.amountValue, 0);
-    const fatsTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.fats.amountValue, 0);
-    const proteinTotal = allFoodItems.reduce((total, item) => total + item.macroNutrients.protein.amountValue, 0);
+
+    const sumValueAndRound = getField => Math.round(allFoodItems.reduce((total, item) => total + getField(item), 0));
+    const calorieTotal = sumValueAndRound(item => item.calories);
+    const carbohydratesTotal = sumValueAndRound(item => item.macroNutrients.carbohydrates.amountValue);
+    const fatsTotal = sumValueAndRound(item => item.macroNutrients.fats.amountValue);
+    const proteinTotal = sumValueAndRound(item => item.macroNutrients.protein.amountValue);
     return (
       <React.Fragment key='totals'>
         <TableRow>
@@ -76,11 +78,7 @@ class FoodTable extends React.Component {
   render() {
     return (
       <div>
-        <Table
-          style={{
-            width: 800
-          }}
-        >
+        <Table>
 
           <TableHead>
             <TableRow>

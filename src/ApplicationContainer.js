@@ -23,7 +23,7 @@ class ApplicationContainer extends React.Component {
     return (
       <div>
         <Grid container justify="center">
-          <Grid item xl={1}>
+          <Grid item>
             <AppBar position="static">
               <Toolbar variant="dense">
 

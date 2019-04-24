@@ -47,23 +47,15 @@ class SearchFoodItems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: '',
             suggestions: []
         }
-
-        this.onChange = this.onChange.bind(this);
+        
         this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
         this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
         this.renderInputComponent = this.renderInputComponent.bind(this);
         this.renderSuggestionsContainer = this.renderSuggestionsContainer.bind(this);
         this.fuse = new Fuse(this.props.foodItems, fuseOptions);
     }
-
-    onChange = (event, { newValue }) => {
-        this.setState({
-            value: newValue
-        });
-    };
 
     //teach autosuggest how to calculate suggestions
     getSuggestions = value => {
@@ -112,12 +104,12 @@ class SearchFoodItems extends React.Component {
     }
 
     render() {
-        const { foodItems, classes } = this.props;
-        const { value, suggestions } = this.state;
+        const { foodItems, classes, onFoodItemSearchInputChange, foodItemSearchValue } = this.props;
+        const { suggestions } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
-            value: value,
-            onChange: this.onChange,
+            value: foodItemSearchValue,
+            onChange: onFoodItemSearchInputChange,
             label: 'Search'
         }
         const theme = {

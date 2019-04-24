@@ -11,6 +11,8 @@ import axios from 'axios';
 import SelectMeasure from './SelectMeasure';
 import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 class AddItem extends React.Component {
   constructor(props) {
@@ -21,6 +23,7 @@ class AddItem extends React.Component {
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleMeasureSelection = this.handleMeasureSelection.bind(this);
     this.handleAddAnotherItem = this.handleAddAnotherItem.bind(this);
+    this.handleFoodItemSearchInputChange = this.handleFoodItemSearchInputChange.bind(this);
     this.getMeasure = this.getMeasure.bind(this);
     this.state = {
       addItemDialogVisible: false,
@@ -34,6 +37,7 @@ class AddItem extends React.Component {
       errors: null,
       foodItems: [],
       selectedFoodItem: {},
+      foodItemSearchValue: '',
       measures: [],
       selectedMeasure: {},
       addAnotherItem: false,
@@ -96,7 +100,9 @@ class AddItem extends React.Component {
       },
       selectedFoodItem: {},
       selectedMeasure: {},
-      selectedServing: ''
+      selectedServing: '',
+      foodItemSearchValue: '',
+      measures: []
     });
   };
 
@@ -134,7 +140,11 @@ class AddItem extends React.Component {
   }
 
   handleAddAnotherItem = () => {
-    this.setState({addAnotherItem: !this.state.addAnotherItem})
+    this.setState({ addAnotherItem: !this.state.addAnotherItem })
+  }
+
+  handleFoodItemSearchInputChange = (event, { newValue }) => {
+    this.setState({ foodItemSearchValue: newValue });
   }
 
   render() {
@@ -143,11 +153,12 @@ class AddItem extends React.Component {
       addItemDialogVisible,
       foodItems,
       measures,
-      addAnotherItem } = this.state;
+      addAnotherItem,
+      foodItemSearchValue } = this.state;
 
     return (
       <div>
-        <Button 
+        <Button
           color='primary'
           variant='contained'
           onClick={this.handleDialogOpen}>
@@ -174,6 +185,8 @@ class AddItem extends React.Component {
               </Grid>
               <Grid item>
                 <SearchFoodItems
+                  foodItemSearchValue={foodItemSearchValue}
+                  onFoodItemSearchInputChange={this.handleFoodItemSearchInputChange}
                   foodItems={foodItems}
                   onFoodItemSelection={this.handleFoodItemSelection}
                 />
@@ -188,13 +201,18 @@ class AddItem extends React.Component {
           </DialogContent>
 
           <DialogActions>
-            <Checkbox
-              checked={addAnotherItem}
-              value={'Add another item'}
-              onChange={this.handleAddAnotherItem}
-            >
+            <FormGroup>
+              <FormControlLabel
+                control={<Checkbox
+                  checked={addAnotherItem}
+                  value={'Add another item'}
+                  onChange={this.handleAddAnotherItem}
+                />}
+                label='Add another item'
+              />
 
-            </Checkbox>
+            </FormGroup>
+
             <Button
               color='primary'
               variant='contained'
