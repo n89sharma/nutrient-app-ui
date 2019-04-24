@@ -27,16 +27,17 @@ class FoodDiary extends React.Component {
     this.setState({ date: date });
   }
 
-  handleFoodItemAddition = (mealsForFoodItem, selectedFoodItem, selectedMeasure) => {
+  handleFoodItemAddition = (mealsForFoodItem, selectedFoodItem, selectedMeasure, selectedServing) => {
     const selectedMeals = Object.keys(mealsForFoodItem).filter(key => mealsForFoodItem[key]);
     axios
-      .get(`http://localhost:8080/food/${selectedFoodItem.foodId}`)
+      .get(`http://localhost:8080/food/${selectedFoodItem.foodId}?measureId=${selectedMeasure.measureId}&serving=${selectedServing}`)
       .then(response => {
         // TODO: backend should multiply selected measure and the food item 
         // information.
         console.log(selectedMeasure);
         console.log(selectedFoodItem);
         console.log(response.data);
+        console.log(selectedServing);
         const newFoodItem = response.data;
         let newFoodItems = Object.assign(this.state.foodItems);
         selectedMeals.forEach(meal => newFoodItems[meal].push(newFoodItem));

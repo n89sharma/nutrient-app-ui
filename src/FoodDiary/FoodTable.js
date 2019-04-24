@@ -32,10 +32,10 @@ class FoodTable extends React.Component {
         <React.Fragment key={foodItem.foodId + meal}>
           <TableRow>
             <TableCell>{foodItem.foodDescription}</TableCell>
-            <TableCell>{foodItem.calories}</TableCell>
-            <TableCell>{foodItem.macroNutrients.carbohydrates.amountValue}</TableCell>
-            <TableCell>{foodItem.macroNutrients.fats.amountValue}</TableCell>
-            <TableCell>{foodItem.macroNutrients.protein.amountValue}</TableCell>
+            <TableCell>{Math.round(foodItem.calories)}</TableCell>
+            <TableCell>{Math.round(foodItem.macroNutrients.carbohydrates.amountValue)}</TableCell>
+            <TableCell>{Math.round(foodItem.macroNutrients.fats.amountValue)}</TableCell>
+            <TableCell>{Math.round(foodItem.macroNutrients.protein.amountValue)}</TableCell>
             <TableCell>
               <IconButton
                 onClick={() => handleFoodItemDeletion(foodItem.foodId, meal)}

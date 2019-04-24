@@ -13,6 +13,7 @@ import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { TextField } from '@material-ui/core';
 
 class AddItem extends React.Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class AddItem extends React.Component {
     this.handleMeasureSelection = this.handleMeasureSelection.bind(this);
     this.handleAddAnotherItem = this.handleAddAnotherItem.bind(this);
     this.handleFoodItemSearchInputChange = this.handleFoodItemSearchInputChange.bind(this);
+    this.handleServingChange = this.handleServingChange.bind(this);
     this.getMeasure = this.getMeasure.bind(this);
     this.state = {
       addItemDialogVisible: false,
@@ -147,6 +149,12 @@ class AddItem extends React.Component {
     this.setState({ foodItemSearchValue: newValue });
   }
 
+  handleServingChange = (event) => {
+    if(!isNaN(event.target.value)) {
+      this.setState({selectedServing: event.target.value});
+    }
+  }
+
   render() {
     const {
       selectedMeals,
@@ -154,7 +162,8 @@ class AddItem extends React.Component {
       foodItems,
       measures,
       addAnotherItem,
-      foodItemSearchValue } = this.state;
+      foodItemSearchValue,
+      selectedServing } = this.state;
 
     return (
       <div>
@@ -174,15 +183,17 @@ class AddItem extends React.Component {
           <DialogTitle>
             Add Item
           </DialogTitle>
-          <DialogContent>
 
+          <DialogContent>
             <Grid container spacing={24}>
+
               <Grid item>
                 <MealSelection
                   selectedMeals={selectedMeals}
                   onMealChange={this.handleMealChange}
                 />
               </Grid>
+
               <Grid item>
                 <SearchFoodItems
                   foodItemSearchValue={foodItemSearchValue}
@@ -191,12 +202,22 @@ class AddItem extends React.Component {
                   onFoodItemSelection={this.handleFoodItemSelection}
                 />
               </Grid>
+
               <Grid item>
                 <SelectMeasure
                   measures={measures}
                   onMeasureSelection={this.handleMeasureSelection}
                 />
               </Grid>
+
+              <Grid item>
+                <TextField
+                  label='Serving'
+                  value={selectedServing}
+                  onChange={this.handleServingChange}
+                />
+              </Grid>
+
             </Grid>
           </DialogContent>
 
