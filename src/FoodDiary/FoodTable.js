@@ -14,11 +14,14 @@ class FoodTable extends React.Component {
   }
 
   renderMealLabelAndFoodItemsForMeal = meal => {
-    const { foodItems } = this.props;
+    const { dailyMeals } = this.props;
+    console.log(dailyMeals);
+    const foodItems = dailyMeals[meal].map(item => item.foodItem);
+
     return (
       <React.Fragment key={meal}>
         <TableRow>
-          <TableCell rowSpan={foodItems[meal].length + 1}>{meal}</TableCell>
+          <TableCell rowSpan={foodItems.length + 1}>{meal}</TableCell>
         </TableRow>
         {this.renderFoodItemsForMeal(meal)}
       </React.Fragment>
@@ -26,9 +29,10 @@ class FoodTable extends React.Component {
   }
 
   renderFoodItemsForMeal = meal => {
-    const { foodItems, handleFoodItemDeletion } = this.props;
+    const { dailyMeals, handleFoodItemDeletion } = this.props;
+    const foodItems = dailyMeals[meal].map(item => item.foodItem);
     return (
-      foodItems[meal].map(foodItem =>
+      foodItems.map(foodItem =>
         <React.Fragment key={foodItem.foodId + meal}>
           <TableRow>
             <TableCell>{foodItem.foodDescription}</TableCell>
@@ -49,12 +53,12 @@ class FoodTable extends React.Component {
   }
 
   renderTotals = () => {
-    const { foodItems } = this.props;
+    const { dailyMeals } = this.props;
     const allFoodItems = [].concat(
-      foodItems[meals.BREAKFAST],
-      foodItems[meals.LUNCH],
-      foodItems[meals.DINNER],
-      foodItems[meals.OTHER]
+      dailyMeals[meals.BREAKFAST].map(item => item.foodItem),
+      dailyMeals[meals.LUNCH].map(item => item.foodItem),
+      dailyMeals[meals.DINNER].map(item => item.foodItem),
+      dailyMeals[meals.OTHER].map(item => item.foodItem)
       );
 
     const sumValueAndRound = getField => Math.round(allFoodItems.reduce((total, item) => total + getField(item), 0));
