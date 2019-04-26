@@ -14,14 +14,13 @@ class FoodTable extends React.Component {
   }
 
   renderMealLabelAndFoodItemsForMeal = meal => {
-    const { dailyMeals } = this.props;
-    console.log(dailyMeals);
-    const foodItems = dailyMeals[meal].map(item => item.foodItem);
+    const { dailySummary } = this.props;
+    const numFoodItems = dailySummary.getFoodItemsForMeal(meal).length + 1;
 
     return (
       <React.Fragment key={meal}>
         <TableRow>
-          <TableCell rowSpan={foodItems.length + 1}>{meal}</TableCell>
+          <TableCell rowSpan={numFoodItems}>{meal}</TableCell>
         </TableRow>
         {this.renderFoodItemsForMeal(meal)}
       </React.Fragment>
@@ -29,10 +28,10 @@ class FoodTable extends React.Component {
   }
 
   renderFoodItemsForMeal = meal => {
-    const { dailyMeals, handleFoodItemDeletion } = this.props;
-    const foodItems = dailyMeals[meal].map(item => item.foodItem);
+    const { dailySummary, handleFoodItemDeletion } = this.props;
+    const foodItemsForMeal = dailySummary.getFoodItemsForMeal(meal);
     return (
-      foodItems.map(foodItem =>
+      foodItemsForMeal.map(foodItem =>
         <React.Fragment key={foodItem.foodId + meal}>
           <TableRow>
             <TableCell>{foodItem.foodDescription}</TableCell>
@@ -53,33 +52,23 @@ class FoodTable extends React.Component {
   }
 
   renderTotals = () => {
-    const { dailyMeals } = this.props;
-    const allFoodItems = [].concat(
-      dailyMeals[meals.BREAKFAST].map(item => item.foodItem),
-      dailyMeals[meals.LUNCH].map(item => item.foodItem),
-      dailyMeals[meals.DINNER].map(item => item.foodItem),
-      dailyMeals[meals.OTHER].map(item => item.foodItem)
-      );
-
-    const sumValueAndRound = getField => Math.round(allFoodItems.reduce((total, item) => total + getField(item), 0));
-    const calorieTotal = sumValueAndRound(item => item.calories);
-    const carbohydratesTotal = sumValueAndRound(item => item.macroNutrients.carbohydrates.amountValue);
-    const fatsTotal = sumValueAndRound(item => item.macroNutrients.fats.amountValue);
-    const proteinTotal = sumValueAndRound(item => item.macroNutrients.protein.amountValue);
+    const { dailySummary } = this.props;
+    const totals = dailySummary.getTotals();
     return (
       <React.Fragment key='totals'>
         <TableRow>
           <TableCell colSpan={2}>Total</TableCell>
-          <TableCell>{calorieTotal}</TableCell>
-          <TableCell>{carbohydratesTotal}</TableCell>
-          <TableCell>{fatsTotal}</TableCell>
-          <TableCell>{proteinTotal}</TableCell>
+          <TableCell>{totals.calorieTotal}</TableCell>
+          <TableCell>{totals.carbohydratesTotal}</TableCell>
+          <TableCell>{totals.fatsTotal}</TableCell>
+          <TableCell>{totals.proteinTotal}</TableCell>
         </TableRow>
       </React.Fragment>
     );
   }
 
   render() {
+    const { dailySummary } = this.props;
     return (
       <div>
         <Table>
