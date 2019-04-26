@@ -1,4 +1,5 @@
 import { meals } from '../Utils/Constants'
+import { format } from 'date-fns/esm';
 
 export class DailySummary {
 
@@ -17,7 +18,7 @@ export class DailySummary {
 
   getApiDailySummary() {
     const userId = 'n89sharma';
-    const date = new Date().toISOString();
+    const date = format(new Date(), 'yyyyMMdd');
     const breakfastPortionsIds = this[meals.BREAKFAST].map(getPortionIds);
     const lunchPortionsIds = this[meals.LUNCH].map(getPortionIds);
     const dinnerPortionsIds = this[meals.DINNER].map(getPortionIds);
