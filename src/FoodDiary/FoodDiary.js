@@ -2,12 +2,11 @@ import React from 'react';
 import CustomDatePicker from '../Utils/CustomDatePicker'
 import AddItem from './AddItem/AddItem'
 import FoodTable from './FoodTable'
-import { meals } from '../Utils/Constants'
 import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import { DailySummary } from './DailySummary'
+import { format } from 'date-fns/esm';
 
-console.log(new DailySummary());
 class FoodDiary extends React.Component {
 
   constructor(props) {
@@ -18,10 +17,12 @@ class FoodDiary extends React.Component {
       date: new Date(),
       dailySummary: new DailySummary()
     };
+    this.getDailySummary(this.state.date);
   }
 
   handleDateChange = date => {
     this.setState({ date: date });
+    this.getDailySummary(date);
   }
 
   handleFoodItemAddition = (mealCheckboxSelection, selectedFoodItemSummary, selectedMeasure, selectedServing) => {
@@ -43,22 +44,32 @@ class FoodDiary extends React.Component {
       .then();
   }
 
+  getDailySummary(date) {
+    const formattedDate = format(date, 'yyyyMMdd');
+    axios
+      .get(`http://localhost:8080/n89sharma/data/${formattedDate}/food-summary`)
+      .then(response => {
+        const newDailySummary = new DailySummary(response.data);
+        this.setState({ dailySummary: newDailySummary });
+      })
+      .then();
+  }
+
   postFoodSummary() {
     const apiDailySummary = this.state.dailySummary.getApiDailySummary();
-    console.log(apiDailySummary);
     axios
       .put(
         `http://localhost:8080/n89sharma/data/${apiDailySummary.date}/food-summary`,
         apiDailySummary
       )
-      .then( response => {
-        console.log(response.data);
+      .then(response => {
       })
   }
 
   handleFoodItemDeletion = (foodId, meal) => {
     const newDailySummary = this.state.dailySummary.removeFoodPortionAndReturnACopy(foodId, meal);
     this.setState({ dailySummary: newDailySummary });
+    this.postFoodSummary();
   }
 
   render() {

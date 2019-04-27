@@ -3,17 +3,31 @@ import { format } from 'date-fns/esm';
 
 export class DailySummary {
 
-  constructor() {
+  constructor(apiData) {
     this.meals = [
       meals.BREAKFAST,
       meals.LUNCH,
       meals.DINNER,
       meals.OTHER
     ];
-    this[meals.BREAKFAST]= [];
-    this[meals.LUNCH] = [];
-    this[meals.DINNER] = [];
-    this[meals.OTHER] = [];
+    if (!apiData) {
+      this[meals.BREAKFAST] = [];
+      this[meals.LUNCH] = [];
+      this[meals.DINNER] = [];
+      this[meals.OTHER] = [];
+    }
+    else {
+      console.log(apiData);
+      this.mapFromApiDailySummaryView(apiData);
+    }
+  }
+
+  mapFromApiDailySummaryView(apiDailySummaryView) {
+    const createPortion = ar => ar.map(ap => new FoodPortion(ap.food, ap.measure, ap.serving));
+    this[meals.BREAKFAST] = createPortion(apiDailySummaryView.breakfast);
+    this[meals.LUNCH] = createPortion(apiDailySummaryView.lunch);
+    this[meals.DINNER] = createPortion(apiDailySummaryView.dinner);
+    this[meals.OTHER] = createPortion(apiDailySummaryView.other);
   }
 
   getApiDailySummary() {
@@ -60,7 +74,6 @@ export class DailySummary {
     const allFoodItems = [].concat(
       ...this.meals.map(meal => this[meal].map(portion => portion.foodItem))
     );
-    console.log(allFoodItems);
     const sumValueAndRound = getField => Math.round(allFoodItems.reduce((total, item) => total + getField(item), 0));
     const calorieTotal = sumValueAndRound(item => item.calories);
     const carbohydratesTotal = sumValueAndRound(item => item.macroNutrients.carbohydrates.amountValue);
