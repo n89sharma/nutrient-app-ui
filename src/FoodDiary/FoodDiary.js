@@ -6,6 +6,7 @@ import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import { DailySummary } from './DailySummary'
 import { format } from 'date-fns/esm';
+import BarLoader from 'react-spinners/BarLoader';
 
 class FoodDiary extends React.Component {
 
@@ -15,7 +16,8 @@ class FoodDiary extends React.Component {
     this.handleFoodItemAddition = this.handleFoodItemAddition.bind(this);
     this.state = {
       date: new Date(),
-      dailySummary: new DailySummary()
+      dailySummary: new DailySummary(),
+      isLoading: true
     };
     this.getDailySummary(this.state.date);
   }
@@ -45,6 +47,7 @@ class FoodDiary extends React.Component {
   }
 
   getDailySummary(date) {
+    this.setState({ isLoading: true });
     const formattedDate = format(date, 'yyyyMMdd');
     axios
       .get(`http://localhost:8080/n89sharma/data/${formattedDate}/food-summary`)
@@ -52,7 +55,7 @@ class FoodDiary extends React.Component {
         const newDailySummary = new DailySummary(response.data);
         this.setState({ dailySummary: newDailySummary });
       })
-      .then();
+      .then(() => this.setState({ isLoading: false }));
   }
 
   postFoodSummary() {
@@ -72,8 +75,27 @@ class FoodDiary extends React.Component {
     this.postFoodSummary();
   }
 
+  renderTable() {
+    const { dailySummary, isLoading } = this.state;
+    if (!isLoading) {
+      return (
+        <React.Fragment>
+          <Grid
+            item
+            xs={12}
+          >
+            <FoodTable
+              dailySummary={dailySummary}
+              handleFoodItemDeletion={this.handleFoodItemDeletion}
+            />
+          </Grid>
+        </React.Fragment>
+      );
+    }
+  }
+
   render() {
-    const { date, dailySummary } = this.state;
+    const { date, isLoading } = this.state;
     return (
       <div>
         <Grid container spacing={24}>
@@ -92,13 +114,26 @@ class FoodDiary extends React.Component {
           </Grid>
         </Grid>
 
-        <Grid container spacing={24}>
-          <Grid item>
-            <FoodTable
-              dailySummary={dailySummary}
-              handleFoodItemDeletion={this.handleFoodItemDeletion}
+        <Grid
+          container
+          spacing={24}
+          alignItems="center"
+          direction="column"
+        >
+          <Grid
+            item
+            xs={12}
+            alignContent="center"
+            alignItems="center"
+            justify="center"
+          >
+            <BarLoader
+              loading={isLoading}
+              size={150}
+              sizeUnit={'px'}
             />
           </Grid>
+          {this.renderTable(isLoading)}
         </Grid>
       </div>
     );
