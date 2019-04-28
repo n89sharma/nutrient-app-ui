@@ -1,12 +1,12 @@
-import React from 'react';
-import CustomDatePicker from '../Utils/CustomDatePicker'
-import AddItem from './AddItem/AddItem'
-import FoodTable from './FoodTable'
-import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
-import { DailySummary } from './DailySummary'
+import axios from 'axios';
 import { format } from 'date-fns/esm';
-import BarLoader from 'react-spinners/BarLoader';
+import React from 'react';
+import CustomDatePicker from '../Utils/CustomDatePicker';
+import Loader from '../Utils/Loader';
+import AddItem from './AddItem/AddItem';
+import { DailySummary } from './DailySummary';
+import FoodTable from './FoodTable';
 
 class FoodDiary extends React.Component {
 
@@ -19,6 +19,9 @@ class FoodDiary extends React.Component {
       dailySummary: new DailySummary(),
       isLoading: true
     };
+  }
+
+  componentDidMount() {
     this.getDailySummary(this.state.date);
   }
 
@@ -123,15 +126,8 @@ class FoodDiary extends React.Component {
           <Grid
             item
             xs={12}
-            alignContent="center"
-            alignItems="center"
-            justify="center"
           >
-            <BarLoader
-              loading={isLoading}
-              size={150}
-              sizeUnit={'px'}
-            />
+            <Loader isLoading={isLoading} />
           </Grid>
           {this.renderTable(isLoading)}
         </Grid>
