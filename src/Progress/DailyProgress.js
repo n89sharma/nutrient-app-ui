@@ -4,6 +4,7 @@ import Loader from '../Utils/Loader';
 import { format } from 'date-fns/esm';
 import axios from 'axios';
 import MacroDistribution from './MacroDistribution';
+import MealDistribution from './MealDistribution';
 import Grid from '@material-ui/core/Grid';
 import CustomDatePicker from '../Utils/CustomDatePicker';
 
@@ -13,7 +14,8 @@ class DailyProgress extends React.Component {
     this.state = {
       date: new Date(),
       isLoading: true,
-      dailyTotals: {}
+      dailyMacroDistribution: {},
+      dailyMealDistribution: {}
     }
     this.handleDateChange.bind(this);
   }
@@ -34,16 +36,20 @@ class DailyProgress extends React.Component {
       .get(`http://localhost:8080/n89sharma/data/${formattedDate}/total`)
       .then(response => {
         console.log(response.data);
-        const newDailyTotals = new MacroDistribution(response.data);
-        this.setState({ dailyTotals: newDailyTotals });
+        const newDailyMacroDistribution = new MacroDistribution(response.data.macroDistribution);
+        const newDailyMealDistribution = new MealDistribution(response.data.mealDistribution);
+        this.setState({
+          dailyMacroDistribution: newDailyMacroDistribution,
+          dailyMealDistribution: newDailyMealDistribution
+        });
       })
       .then(() => this.setState({ isLoading: false }));
   }
 
-  renderChart(isLoading) {
+  renderMacroChart(isLoading) {
     if (!isLoading) {
-      const { dailyTotals } = this.state;
-      const data = dailyTotals.getChartData()
+      const { dailyMacroDistribution } = this.state;
+      const data = dailyMacroDistribution.getChartData()
       console.log(data);
       return (
         <CustomPieChart
@@ -52,10 +58,31 @@ class DailyProgress extends React.Component {
           nameKey='macroName'
           cx={'50%'}
           cy={'50%'}
-          width={800}
-          height={500}
-          innerRadius={100}
-          outerRadius={200}
+          width={400}
+          height={400}
+          innerRadius={50}
+          outerRadius={100}
+        />
+      );
+    }
+  }
+
+  renderMealChart(isLoading) {
+    if (!isLoading) {
+      const { dailyMealDistribution } = this.state;
+      const data = dailyMealDistribution.getChartData()
+      console.log(data);
+      return (
+        <CustomPieChart
+          data={data}
+          dataKey='percentOfTotalCalories'
+          nameKey='mealName'
+          cx={'50%'}
+          cy={'50%'}
+          width={400}
+          height={400}
+          innerRadius={50}
+          outerRadius={100}
         />
       );
     }
@@ -82,7 +109,8 @@ class DailyProgress extends React.Component {
           </Grid>
 
           <Grid item xs={12}>
-            {this.renderChart(isLoading)}
+            {this.renderMacroChart(isLoading)}
+            {this.renderMealChart(isLoading)}
           </Grid>
 
         </Grid>

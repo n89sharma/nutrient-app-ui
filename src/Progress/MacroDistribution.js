@@ -7,10 +7,10 @@ class MacroDistribution {
       this.other = 0;
     }
     else {
-      this.fats = this.round(apiData.caloriePercentFromFats);
-      this.carbohydrates = this.round(apiData.caloriePercentFromCarbohydrates);
-      this.proteins = this.round(apiData.caloriePercentFromProteins);
-      this.other = this.round(apiData.caloriePercentFromOther);
+      this.fats = this.round(apiData.fats);
+      this.carbohydrates = this.round(apiData.carbohydrates);
+      this.proteins = this.round(apiData.proteins);
+      this.other = this.round(apiData.other);
     }
   }
 
@@ -24,7 +24,7 @@ class MacroDistribution {
       this.getChartDataElement('carbohydrates'),
       this.getChartDataElement('proteins'),
       this.getChartDataElement('other')
-    ]
+    ];
   }
 
   getChartDataElement(macroName) {
