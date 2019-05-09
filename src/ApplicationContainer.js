@@ -62,8 +62,6 @@ class ApplicationContainer extends React.Component {
         </Grid>
 
         <Grid container justify="center">
-          <Grid item xl={1}>
-          </Grid>
           <ComponentSelector
             enabledComponent={this.state.enabledComponent}
           />

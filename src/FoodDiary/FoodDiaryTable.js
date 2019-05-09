@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import { meals } from '../Utils/Constants';
 
-class FoodTable extends React.Component {
+class FoodDiaryTable extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -100,4 +100,4 @@ class FoodTable extends React.Component {
   }
 }
 
-export default FoodTable;
+export default FoodDiaryTable;

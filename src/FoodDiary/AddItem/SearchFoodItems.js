@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper'
 import MenuItem from '@material-ui/core/MenuItem'
 import Fuse from 'fuse.js';
 import { withStyles } from '@material-ui/core/styles';
+import memoizeOne from 'memoize-one';
 
 const styles = theme => ({
     suggestionsList: {
@@ -54,8 +55,12 @@ class SearchFoodItems extends React.Component {
         this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
         this.renderInputComponent = this.renderInputComponent.bind(this);
         this.renderSuggestionsContainer = this.renderSuggestionsContainer.bind(this);
-        this.fuse = new Fuse(this.props.foodItems, fuseOptions);
+        this.fuse = this.memoizedFuse(this.props.foodItems);
     }
+
+    initializeFuse = foodItems => new Fuse(foodItems, fuseOptions);
+
+    memoizedFuse = memoizeOne(this.initializeFuse);
 
     //teach autosuggest how to calculate suggestions
     getSuggestions = value => {
@@ -105,6 +110,7 @@ class SearchFoodItems extends React.Component {
 
     render() {
         const { foodItems, classes, onFoodItemSearchInputChange, foodItemSearchValue } = this.props;
+        this.fuse = this.memoizedFuse(foodItems);
         const { suggestions } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
@@ -115,7 +121,7 @@ class SearchFoodItems extends React.Component {
         const theme = {
             suggestionsList: classes.suggestionsList
         }
-
+        
         return (
             <Autosuggest
                 renderInputComponent={this.renderInputComponent}

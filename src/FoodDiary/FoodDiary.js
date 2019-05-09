@@ -6,7 +6,7 @@ import CustomDatePicker from '../Utils/CustomDatePicker';
 import Loader from '../Utils/Loader';
 import AddItem from './AddItem/AddItem';
 import { DailySummary } from './DailySummary';
-import FoodTable from './FoodTable';
+import FoodDiaryTable from './FoodDiaryTable';
 
 class FoodDiary extends React.Component {
 
@@ -88,7 +88,7 @@ class FoodDiary extends React.Component {
             item
             xs={12}
           >
-            <FoodTable
+            <FoodDiaryTable
               dailySummary={dailySummary}
               handleFoodItemDeletion={this.handleFoodItemDeletion}
             />
