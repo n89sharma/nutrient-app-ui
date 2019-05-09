@@ -13,20 +13,18 @@ class RecipeTable extends React.Component {
   }
 
   renderPortion = portion => {
-    const { onPortionDeletion } = this.props;
-    const foodItem = portion.foodItem;
+    const { handleRecipeItemDeletion } = this.props;
     const index = portion.index;
     return (
       <React.Fragment key={index}>
         <TableRow>
-          <TableCell>{foodItem.foodDescription}</TableCell>
-          <TableCell>{Math.round(foodItem.calories)}</TableCell>
-          <TableCell>{Math.round(foodItem.macroNutrients.carbohydrates.amountValue)}</TableCell>
-          <TableCell>{Math.round(foodItem.macroNutrients.fats.amountValue)}</TableCell>
-          <TableCell>{Math.round(foodItem.macroNutrients.protein.amountValue)}</TableCell>
+          <TableCell>{portion.foodItem.foodDescription}</TableCell>
+          <TableCell>{portion.measure.measureName}</TableCell>
+          <TableCell>{portion.serving}</TableCell>
+          <TableCell>{Math.round(portion.foodItem.calories)}</TableCell>
           <TableCell>
             <IconButton
-              onClick={() => onPortionDeletion(index)}
+              onClick={() => handleRecipeItemDeletion(index)}
             >
               <DeleteIcon />
             </IconButton>
@@ -61,17 +59,15 @@ class RecipeTable extends React.Component {
           <TableHead>
             <TableRow>
               <TableCell>Item</TableCell>
+              <TableCell>Meaure</TableCell>
+              <TableCell>Serving</TableCell>
               <TableCell>Calories</TableCell>
-              <TableCell>Carbohydrate</TableCell>
-              <TableCell>Fat</TableCell>
-              <TableCell>Protein</TableCell>
-              <TableCell>Delete</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {recipe.portions.map(portion => this.renderPortion(portion))}
-            {this.renderTotals()}
           </TableBody>
         </Table>
       </div>

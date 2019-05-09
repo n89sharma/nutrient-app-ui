@@ -4,7 +4,7 @@ import { format } from 'date-fns/esm';
 import React from 'react';
 import CustomDatePicker from '../Utils/CustomDatePicker';
 import Loader from '../Utils/Loader';
-import AddItem from './AddItem/AddItem';
+import AddItem from './AddItem';
 import { DailySummary } from './DailySummary';
 import FoodDiaryTable from './FoodDiaryTable';
 
@@ -13,7 +13,8 @@ class FoodDiary extends React.Component {
   constructor(props) {
     super(props)
     this.handleDateChange = this.handleDateChange.bind(this);
-    this.handleFoodItemAddition = this.handleFoodItemAddition.bind(this);
+    this.handleDailySummaryItemAddition = this.handleDailySummaryItemAddition.bind(this);
+    this.handleDailySummaryItemDeletion = this.handleDailySummaryItemDeletion.bind(this);
     this.state = {
       date: new Date(),
       dailySummary: new DailySummary(),
@@ -30,25 +31,6 @@ class FoodDiary extends React.Component {
     this.getDailySummary(date);
   }
 
-  handleFoodItemAddition = (mealCheckboxSelection, selectedFoodItemSummary, selectedMeasure, selectedServing) => {
-    axios
-      .get(`http://localhost:8080/food/${selectedFoodItemSummary.foodId}?measureId=${selectedMeasure.measureId}&serving=${selectedServing}`)
-      .then(response => {
-        const selectedFoodItem = response.data;
-        const newDailySummary = this.state.dailySummary.addNewFoodPortionAndReturnACopy(
-          mealCheckboxSelection,
-          selectedFoodItem,
-          selectedMeasure,
-          selectedServing
-        );
-        this.setState({
-          dailySummary: newDailySummary
-        });
-        this.postFoodSummary();
-      })
-      .then();
-  }
-
   getDailySummary(date) {
     this.setState({ isLoading: true });
     const formattedDate = format(date, 'yyyyMMdd');
@@ -61,7 +43,30 @@ class FoodDiary extends React.Component {
       .then(() => this.setState({ isLoading: false }));
   }
 
-  postFoodSummary() {
+  handleDailySummaryItemAddition = (
+    mealCheckboxSelection,
+    selectedFoodItem,
+    selectedMeasure,
+    selectedServing) => {
+
+    const newDailySummary = this.state.dailySummary.addNewPortionAndReturnACopy(
+      mealCheckboxSelection,
+      selectedFoodItem,
+      selectedMeasure,
+      selectedServing)
+    this.setState({
+      dailySummary: newDailySummary
+    });
+    this.postDailySummary();
+  }
+
+  handleDailySummaryItemDeletion = (foodId, meal) => {
+    const newDailySummary = this.state.dailySummary.removeFoodPortionAndReturnACopy(foodId, meal);
+    this.setState({ dailySummary: newDailySummary });
+    this.postDailySummary();
+  }
+
+  postDailySummary() {
     const apiDailySummary = this.state.dailySummary.getApiDailySummary();
     console.log(apiDailySummary);
     axios
@@ -71,12 +76,6 @@ class FoodDiary extends React.Component {
       )
       .then(response => {
       })
-  }
-
-  handleFoodItemDeletion = (foodId, meal) => {
-    const newDailySummary = this.state.dailySummary.removeFoodPortionAndReturnACopy(foodId, meal);
-    this.setState({ dailySummary: newDailySummary });
-    this.postFoodSummary();
   }
 
   renderTable() {
@@ -90,7 +89,7 @@ class FoodDiary extends React.Component {
           >
             <FoodDiaryTable
               dailySummary={dailySummary}
-              handleFoodItemDeletion={this.handleFoodItemDeletion}
+              handleDailySummaryItemDeletion={this.handleDailySummaryItemDeletion}
             />
           </Grid>
         </React.Fragment>
@@ -113,7 +112,7 @@ class FoodDiary extends React.Component {
 
           <Grid item>
             <AddItem
-              handleFoodItemAddition={this.handleFoodItemAddition}
+              handleDailySummaryItemAddition={this.handleDailySummaryItemAddition}
             />
           </Grid>
         </Grid>

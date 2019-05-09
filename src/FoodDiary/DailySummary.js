@@ -48,7 +48,7 @@ export class DailySummary {
     };
   }
 
-  addNewFoodPortionAndReturnACopy(
+  addNewPortionAndReturnACopy(
     mealCheckboxSelection,
     selectedFoodItem,
     selectedMeasure,

@@ -28,7 +28,7 @@ class FoodDiaryTable extends React.Component {
   }
 
   renderFoodItemsForMeal = meal => {
-    const { dailySummary, handleFoodItemDeletion } = this.props;
+    const { dailySummary, handleDailySummaryItemDeletion } = this.props;
     const foodItemsForMeal = dailySummary.getFoodItemsForMeal(meal);
     return (
       foodItemsForMeal.map(foodItem =>
@@ -41,7 +41,7 @@ class FoodDiaryTable extends React.Component {
             <TableCell>{Math.round(foodItem.macroNutrients.protein.amountValue)}</TableCell>
             <TableCell>
               <IconButton
-                onClick={() => handleFoodItemDeletion(foodItem.foodId, meal)}
+                onClick={() => handleDailySummaryItemDeletion(foodItem.foodId, meal)}
               >
                 <DeleteIcon />
               </IconButton>

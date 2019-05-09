@@ -39,12 +39,13 @@ class Recipe {
     }
   }
 
-  getApiRecipe (userId, recipeName, description) {
+  getApiRecipe (userId, recipeName, recipeDescription, recipeMeasure) {
     let portionIds = this.portions.map(this.getPortionId)
     return {
       userId: userId,
       name: recipeName,
-      description: description,
+      description: recipeDescription,
+      measure: recipeMeasure,
       portionIds: portionIds
     }
   }

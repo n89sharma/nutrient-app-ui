@@ -2,154 +2,46 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import SearchFoodItems from '../FoodDiary/AddItem/SearchFoodItems';
-import SelectMeasure from '../FoodDiary/AddItem/SelectMeasure';
+import SearchFoodItems from '../Portion/SearchFoodItems';
+import SelectMeasure from '../Portion/SelectMeasure';
 import axios from 'axios';
 import RecipeTable from './RecipeTable';
 import Recipe from './Recipe';
+import PortionComponent from '../Portion/PortionComponent';
 
 class AddRecipe extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      foodItemSearchValue: '',
-      foodItems: [],
-      measures: [],
-      selectedServing: '',
       recipe: new Recipe(),
       recipeName: '',
-      recipeDescription: ''
+      recipeDescription: '',
+      recipeMeasure: ''
     };
-    this.clearUserSelection.bind(this);
-    this.handleFoodItemSelection.bind(this);
-    this.handleMeasureSelection.bind(this);
-    this.handleFoodItemSearchInputChange.bind(this);
-    this.handleServingChange.bind(this);
-    this.handleItemAddition.bind(this);
-    this.handlePortionDeletion.bind(this);
-    this.handleRecipeSave.bind(this);
+    this.handleRecipeItemAddition.bind(this);
+    this.handleRecipeItemDeletion.bind(this);
     this.handleRecipeNameChange.bind(this);
     this.handleRecipeDescriptionChange.bind(this);
+    this.handleRecipeMeasureChange.bind(this);
+    this.handleRecipeSave.bind(this);
   }
 
-  getFoodItems() {
-    axios
-      .get('http://localhost:8080/food')
-      .then(response => {
-        this.setState({
-          foodItems: response.data
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      .then(() => {
-        this.setState({
-          isLoading: false
-        });
-      });
-  }
-
-  getAndAddFoodToRecipe(selectedFoodItem, selectedMeasure, selectedServing) {
-    const foodId = selectedFoodItem.foodId;
-    const measureId = selectedMeasure.measureId;
-    axios
-      .get(`http://localhost:8080/food/${foodId}?measureId=${measureId}&serving=${selectedServing}`)
-      .then(response => {
-        const newFoodItem = response.data;
-        const newRecipe = this.state.recipe.addPortionAndGetRecipe(
-          newFoodItem,
-          selectedMeasure,
-          selectedServing);
-        this.setState({
-          recipe: newRecipe
-        });
-      })
-      .then();
-  }
-
-  getMeasure(selectedFoodItem) {
-    console.log('requesting measure');
-    const foodId = selectedFoodItem.foodId;
-    axios
-      .get(`http://localhost:8080/food/${foodId}/measure`)
-      .then(response => {
-        this.setState({
-          selectedFoodItem: selectedFoodItem,
-          measures: response.data
-        });
-        console.log('measures loaded');
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      .then(() => {
-        this.setState({
-          isLoading: false
-        });
-      })
-  }
-
-  saveRecipe(recipe) {
-    axios
-      .post(`http://localhost:8080/n89sharma/recipe`, recipe)
-      .then();
-  }
-
-  componentDidMount() {
-    this.getFoodItems();
-  }
-
-  clearUserSelection = () => {
-    this.setState({
-      foodItemSearchValue: '',
-      measures: [],
-      selectedServing: '',
-    })
-  }
-
-  handleFoodItemSelection = selectedFoodItem => {
-    this.getMeasure(selectedFoodItem);
-  }
-
-  handleMeasureSelection = selectedMeasure => {
-    this.setState({ selectedMeasure: selectedMeasure });
-  }
-
-  handleFoodItemSearchInputChange = (event, { newValue }) => {
-    this.setState({ foodItemSearchValue: newValue });
-  }
-
-  handleServingChange = (event) => {
-    if (!isNaN(event.target.value)) {
-      this.setState({ selectedServing: event.target.value });
-    }
-  }
-
-  handleItemAddition = () => {
-    const { selectedFoodItem, selectedMeasure, selectedServing } = this.state;
-    if (selectedFoodItem && selectedMeasure && selectedServing) {
-      this.getAndAddFoodToRecipe(selectedFoodItem, selectedMeasure, selectedServing);
-      this.clearUserSelection();
-    }
-  }
-
-  handlePortionDeletion = index => {
-    const newRecipe = this.state.recipe.deletePortionAndGetRecipe(index);
+  handleRecipeItemAddition = (newItem, selectedMeasure, selectedServing) => {
+    const newRecipe = this.state.recipe.addPortionAndGetRecipe(
+      newItem,
+      selectedMeasure,
+      selectedServing);
     this.setState({
       recipe: newRecipe
     });
   }
 
-  handleRecipeSave = () => {
-    const userId = 'n89sharma'
-    const { recipeName, recipeDescription, recipe } = this.state
-    const apiRecipe = recipe.getApiRecipe(
-      userId,
-      recipeName,
-      recipeDescription);
-    this.saveRecipe(apiRecipe);
+  handleRecipeItemDeletion = index => {
+    const newRecipe = this.state.recipe.deletePortionAndGetRecipe(index);
+    this.setState({
+      recipe: newRecipe
+    });
   }
 
   handleRecipeNameChange = event => {
@@ -160,53 +52,43 @@ class AddRecipe extends React.Component {
     this.setState({ recipeDescription: event.target.value })
   }
 
-  render() {
-    const {
-      foodItemSearchValue,
-      foodItems,
-      measures,
-      selectedServing,
-      recipe,
-      recipeName,
-      recipeDescription } = this.state;
+  handleRecipeMeasureChange = event => {
+    this.setState({ recipeMeasure: event.target.value })
+  }
 
+  handleRecipeSave = () => {
+    const userId = 'n89sharma'
+    const { recipeName, recipeDescription, recipeMeasure, recipe } = this.state
+    const apiRecipe = recipe.getApiRecipe(
+      userId,
+      recipeName,
+      recipeDescription,
+      recipeMeasure);
+    this.saveRecipe(apiRecipe);
+    this.clearRecipe();
+  }
+
+  saveRecipe = recipe => {
+    axios
+      .post(`http://localhost:8080/n89sharma/recipe`, recipe)
+      .then();
+  }
+
+  clearRecipe = () => {
+    this.setState({
+      recipe: new Recipe(),
+      recipeName: '',
+      recipeDescription: ''
+    })
+  }
+
+  render() {
+    const { recipe, recipeName, recipeDescription, recipeMeasure } = this.state;
     return (
       <div>
 
         <Grid container spacing={24}>
-          <Grid item xs={3}>
-            <SearchFoodItems
-              foodItemSearchValue={foodItemSearchValue}
-              onFoodItemSearchInputChange={this.handleFoodItemSearchInputChange}
-              foodItems={foodItems}
-              onFoodItemSelection={this.handleFoodItemSelection}
-            />
-          </Grid>
-
-          <Grid item xs={3}>
-            <SelectMeasure
-              measures={measures}
-              onMeasureSelection={this.handleMeasureSelection}
-            />
-          </Grid>
-
-          <Grid item xs={3}>
-            <TextField
-              label='Serving'
-              value={selectedServing}
-              onChange={this.handleServingChange}
-            />
-          </Grid>
-
-          <Grid item xs={3}>
-            <Button
-              color='primary'
-              variant='contained'
-              onClick={this.handleItemAddition}
-            >
-              Add Item
-            </Button>
-          </Grid>
+          <PortionComponent handleParentItemAdd={this.handleRecipeItemAddition} />
         </Grid>
 
         <Grid container spacing={24}>
@@ -223,6 +105,14 @@ class AddRecipe extends React.Component {
               label='Recipe Description'
               value={recipeDescription}
               onChange={this.handleRecipeDescriptionChange}
+            />
+          </Grid>
+
+          <Grid item xs={3}>
+            <TextField
+              label='Recipe Measure'
+              value={recipeMeasure}
+              onChange={this.handleRecipeMeasureChange}
             />
           </Grid>
 
@@ -244,7 +134,7 @@ class AddRecipe extends React.Component {
           >
             <RecipeTable
               recipe={recipe}
-              onPortionDeletion={this.handlePortionDeletion}
+              handleRecipeItemDeletion={this.handleRecipeItemDeletion}
             />
           </Grid>
         </Grid>

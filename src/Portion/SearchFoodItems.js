@@ -23,12 +23,12 @@ const fuseOptions = {
     maxPatternLength: 32,
     minMatchCharLength: 3,
     keys: [
-        "foodDescription"
+        "description"
     ]
 }
 
 //get the value from the suggestion
-const getSuggestionValue = suggestion => suggestion.foodDescription;
+const getSuggestionValue = suggestion => suggestion.description;
 
 //render suggestion
 function renderSuggestion(suggestion, { query, isHighlighted }) {
@@ -36,7 +36,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
         <MenuItem component="div">
             <div>
                 <span>
-                    {suggestion.foodDescription}
+                    {suggestion.description}
                 </span>
             </div>
         </MenuItem>
@@ -55,10 +55,10 @@ class SearchFoodItems extends React.Component {
         this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
         this.renderInputComponent = this.renderInputComponent.bind(this);
         this.renderSuggestionsContainer = this.renderSuggestionsContainer.bind(this);
-        this.fuse = this.memoizedFuse(this.props.foodItems);
+        this.fuse = this.memoizedFuse(this.props.items);
     }
 
-    initializeFuse = foodItems => new Fuse(foodItems, fuseOptions);
+    initializeFuse = items => new Fuse(items, fuseOptions);
 
     memoizedFuse = memoizeOne(this.initializeFuse);
 
@@ -79,7 +79,7 @@ class SearchFoodItems extends React.Component {
 
     onSuggestionSelected = (event, args) => {
         const { suggestion, ...other} = args;
-        this.props.onFoodItemSelection(suggestion);
+        this.props.handleItemSelection(suggestion);
     }
 
     renderInputComponent(props) {
@@ -109,13 +109,13 @@ class SearchFoodItems extends React.Component {
     }
 
     render() {
-        const { foodItems, classes, onFoodItemSearchInputChange, foodItemSearchValue } = this.props;
-        this.fuse = this.memoizedFuse(foodItems);
+        const { classes, items, handleItemSearchInputChange, itemSearchValue } = this.props;
+        this.fuse = this.memoizedFuse(items);
         const { suggestions } = this.state;
         const inputProps = {
             placeholder: 'Search a food item',
-            value: foodItemSearchValue,
-            onChange: onFoodItemSearchInputChange,
+            value: itemSearchValue,
+            onChange: handleItemSearchInputChange,
             label: 'Search'
         }
         const theme = {
