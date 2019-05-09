@@ -63,6 +63,7 @@ class FoodDiary extends React.Component {
 
   postFoodSummary() {
     const apiDailySummary = this.state.dailySummary.getApiDailySummary();
+    console.log(apiDailySummary);
     axios
       .put(
         `http://localhost:8080/n89sharma/data/${apiDailySummary.date}/food-summary`,
