@@ -35,7 +35,6 @@ class DailyProgress extends React.Component {
     axios
       .get(`http://localhost:8080/n89sharma/data/${formattedDate}/total`)
       .then(response => {
-        console.log(response.data)
         const newDailyMacroDistribution = new MacroDistribution(response.data.macroDistribution)
         const newDailyMealDistribution = new MealDistribution(response.data.mealDistribution)
         this.setState({
@@ -50,7 +49,6 @@ class DailyProgress extends React.Component {
     if (!isLoading) {
       const { dailyMacroDistribution } = this.state
       const data = dailyMacroDistribution.getChartData()
-      console.log(data)
       return (
         <CustomPieChart
           data={data}
@@ -72,7 +70,6 @@ class DailyProgress extends React.Component {
     if (!isLoading) {
       const { dailyMealDistribution } = this.state
       const data = dailyMealDistribution.getChartData()
-      console.log(data)
       return (
         <CustomPieChart
           data={data}

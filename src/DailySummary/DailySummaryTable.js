@@ -1,71 +1,88 @@
-import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
-import { meals } from '../Utils/Constants';
+import React from 'react'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import DeleteIcon from '@material-ui/icons/Delete'
+import IconButton from '@material-ui/core/IconButton'
+import { meals } from '../Utils/Constants'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+
+
+const CustomTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.common.white,
+    fontSize:17
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
 
 class DailySummaryTable extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   renderMealLabelAndFoodItemsForMeal = meal => {
-    const { dailySummary } = this.props;
-    const numFoodItems = dailySummary.getFoodItemsForMeal(meal).length + 1;
-
+    const { dailySummary, handleDailySummaryItemDeletion } = this.props
+    let foodItemsForMeal = dailySummary.getFoodItemsForMeal(meal)
+    const numFoodItems = foodItemsForMeal.length == 0 ? 1 : foodItemsForMeal.length
+    const firstFoodItem = numFoodItems ? foodItemsForMeal.splice(0, 1)[0] : null
     return (
       <React.Fragment key={meal}>
         <TableRow>
-          <TableCell rowSpan={numFoodItems}>{meal}</TableCell>
+          <CustomTableCell rowSpan={numFoodItems}>{meal}</CustomTableCell>
+          {firstFoodItem ? this.renderFoodItemsForMeal(firstFoodItem, meal, handleDailySummaryItemDeletion) : null}
         </TableRow>
-        {this.renderFoodItemsForMeal(meal)}
+        {foodItemsForMeal.map(item => {
+          return (
+            <TableRow key={item.foodId + meal}>
+              {this.renderFoodItemsForMeal(item, meal, handleDailySummaryItemDeletion)}
+            </TableRow>
+          )
+        })}
       </React.Fragment>
-    );
+    )
   }
 
-  renderFoodItemsForMeal = meal => {
-    const { dailySummary, handleDailySummaryItemDeletion } = this.props;
-    const foodItemsForMeal = dailySummary.getFoodItemsForMeal(meal);
+  renderFoodItemsForMeal = (foodItem, meal, handleDelete) => {
     return (
-      foodItemsForMeal.map(foodItem =>
-        <React.Fragment key={foodItem.foodId + meal}>
-          <TableRow>
-            <TableCell>{foodItem.foodDescription}</TableCell>
-            <TableCell>{Math.round(foodItem.calories)}</TableCell>
-            <TableCell>{Math.round(foodItem.macroNutrients.carbohydrates.amountValue)}</TableCell>
-            <TableCell>{Math.round(foodItem.macroNutrients.fats.amountValue)}</TableCell>
-            <TableCell>{Math.round(foodItem.macroNutrients.protein.amountValue)}</TableCell>
-            <TableCell>
-              <IconButton
-                onClick={() => handleDailySummaryItemDeletion(foodItem.foodId, meal)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        </React.Fragment>
-      ));
+      <React.Fragment key={foodItem.foodId + meal}>
+        <CustomTableCell>{foodItem.foodDescription}</CustomTableCell>
+        <CustomTableCell>{Math.round(foodItem.calories)}</CustomTableCell>
+        <CustomTableCell>{Math.round(foodItem.macroNutrients.carbohydrates.amountValue)}</CustomTableCell>
+        <CustomTableCell>{Math.round(foodItem.macroNutrients.fats.amountValue)}</CustomTableCell>
+        <CustomTableCell>{Math.round(foodItem.macroNutrients.protein.amountValue)}</CustomTableCell>
+        <CustomTableCell>
+          <IconButton
+            onClick={() => handleDelete(foodItem.foodId, meal)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </CustomTableCell>
+      </React.Fragment>
+    )
   }
 
   renderTotals = () => {
-    const { dailySummary } = this.props;
-    const totals = dailySummary.getTotals();
+    const { dailySummary } = this.props
+    const totals = dailySummary.getTotals()
     return (
       <React.Fragment key='totals'>
         <TableRow>
-          <TableCell colSpan={2}>Total</TableCell>
-          <TableCell>{totals.calorieTotal}</TableCell>
-          <TableCell>{totals.carbohydratesTotal}</TableCell>
-          <TableCell>{totals.fatsTotal}</TableCell>
-          <TableCell>{totals.proteinTotal}</TableCell>
-          <TableCell></TableCell>
+          <CustomTableCell colSpan={2}>Total</CustomTableCell>
+          <CustomTableCell>{totals.calorieTotal}</CustomTableCell>
+          <CustomTableCell>{totals.carbohydratesTotal}</CustomTableCell>
+          <CustomTableCell>{totals.fatsTotal}</CustomTableCell>
+          <CustomTableCell>{totals.proteinTotal}</CustomTableCell>
+          <CustomTableCell></CustomTableCell>
         </TableRow>
       </React.Fragment>
-    );
+    )
   }
 
   render() {
@@ -75,13 +92,13 @@ class DailySummaryTable extends React.Component {
 
           <TableHead>
             <TableRow>
-              <TableCell>Meal</TableCell>
-              <TableCell>Item</TableCell>
-              <TableCell>Calories</TableCell>
-              <TableCell>Carbohydrate</TableCell>
-              <TableCell>Fat</TableCell>
-              <TableCell>Protein</TableCell>
-              <TableCell>Delete</TableCell>
+              <CustomTableCell>Meal</CustomTableCell>
+              <CustomTableCell>Item</CustomTableCell>
+              <CustomTableCell>Calories</CustomTableCell>
+              <CustomTableCell>Carbohydrate</CustomTableCell>
+              <CustomTableCell>Fat</CustomTableCell>
+              <CustomTableCell>Protein</CustomTableCell>
+              <CustomTableCell>Delete</CustomTableCell>
             </TableRow>
           </TableHead>
 
@@ -95,9 +112,9 @@ class DailySummaryTable extends React.Component {
 
         </Table>
       </React.Fragment>
-    );
+    )
 
   }
 }
 
-export default DailySummaryTable;
+export default DailySummaryTable

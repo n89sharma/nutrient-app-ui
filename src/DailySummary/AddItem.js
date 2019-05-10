@@ -108,7 +108,7 @@ class AddItem extends React.Component {
             Add Item
           </DialogTitle>
 
-          <DialogContent margin>
+          <DialogContent>
             <Grid
               container
               justify="center"

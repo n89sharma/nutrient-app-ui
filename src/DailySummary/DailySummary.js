@@ -15,7 +15,6 @@ export class DailySummary {
       this[meals.DINNER] = []
       this[meals.OTHER] = []
     } else {
-      console.log(apiData)
       this.mapFromApiDailySummaryView(apiData)
     }
   }

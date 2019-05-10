@@ -98,7 +98,6 @@ class SearchFoodItems extends React.Component {
   }
 
   renderSuggestionsContainer({ containerProps, children, query }) {
-    console.log(containerProps)
     return (
       <Paper
         open={!!children}
