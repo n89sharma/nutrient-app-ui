@@ -1,20 +1,20 @@
-import React from 'react';
-import { componentNames as components } from './Utils/Constants';
-import FoodDiary from './FoodDiary/FoodDiary'
-import AddRecipe from './Custom/AddRecipe';
-import DailyProgress from './Progress/DailyProgress';
+import React from 'react'
+import { componentNames as components } from './Utils/Constants'
+import DailySummaryComponent from './DailySummary/DailySummaryComponent'
+import RecipeComponent from './Custom/RecipeComponent'
+import DailyProgress from './Progress/DailyProgress'
 
 function ComponentSelector (props) {
-  switch(props.enabledComponent) {
+  switch (props.enabledComponent) {
     case components.FOOD_DIARY:
-      return <FoodDiary/>;
+      return <DailySummaryComponent />
     case components.CUSTOM:
-      return <AddRecipe/>;
+      return <RecipeComponent />
     case components.PROGRESS:
-      return <DailyProgress/>;
+      return <DailyProgress />
     default:
-      return null;
+      return null
   }
 }
 
-export default ComponentSelector;
+export default ComponentSelector

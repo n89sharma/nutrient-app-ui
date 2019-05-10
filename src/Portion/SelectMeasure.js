@@ -33,7 +33,7 @@ class SelectMeasure extends React.Component {
 
   render() {
     const { selectedMeasureName } = this.state;
-    const { measures } = this.props;
+    const { measures, isLoading } = this.props;
     return (
       <div>
         <TextField
@@ -42,6 +42,7 @@ class SelectMeasure extends React.Component {
           label='Select Measure'
           onChange={this.handleMeasureSelection}
           style={{width:200}}
+          disabled={isLoading}
         >
           {
             measures.map(measure => this.renderMeasureMenuOption(measure))

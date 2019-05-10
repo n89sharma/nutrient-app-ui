@@ -9,7 +9,7 @@ class PortionComponent extends React.Component {
     super(props)
     this.state = {
       isLoading: true,
-      items: [{ id: null, description: null }],
+      items: [],
       itemSearchValue: '',
       selectedItem: {},
       measures: [],
@@ -26,25 +26,23 @@ class PortionComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.getFoodItems()
+    this.setState({ isLoading: true }, () => {
+      this.props.onPortionComponentLoadStart();
+      this.getItemSummaries()
+    })
   }
 
-  getFoodItems() {
+  getItemSummaries() {
     axios
       .get('http://localhost:8080/n89sharma/food')
       .then(response => {
-        console.log('response.data')
-        this.setState({
-          items: response.data
-        })
+        this.setState({ items: response.data })
       })
       .catch(error => {
         console.log(error)
       })
       .then(() => {
-        this.setState({
-          isLoading: false
-        })
+        this.setState({ isLoading: false }, () => this.props.onPortionComponentLoadFinish())
       })
   }
 
@@ -70,16 +68,13 @@ class PortionComponent extends React.Component {
         console.log(error)
       })
       .then(() => {
-        this.setState({
-          isLoading: false
-        })
+        this.setState({ isLoading: false }, () => this.props.onPortionComponentLoadFinish())
       })
   }
 
-  handleItemAdd = () => {
+  getItemDetails = () => {
     const { selectedItem, selectedMeasure, selectedServing } = this.state
     const { handleParentItemAdd } = this.props
-
     let url = ''
     switch (selectedItem.itemType) {
       case 'FOOD':
@@ -97,9 +92,7 @@ class PortionComponent extends React.Component {
         this.clearUserSelection();
       })
       .then(() => {
-        this.setState({
-          isLoading: false
-        })
+        this.setState({ isLoading: false }, () => this.props.onPortionComponentLoadFinish())
       })
   }
 
@@ -124,24 +117,41 @@ class PortionComponent extends React.Component {
   }
 
   handleItemSelection = selectedItem => {
-    this.getMeasure(selectedItem)
+    this.setState({ isLoading: true }, () => {
+      this.props.onPortionComponentLoadStart();
+      this.getMeasure(selectedItem)
+    })
   }
 
   handleMeasureSelection = selectedMeasure => {
     this.setState({ selectedMeasure: selectedMeasure });
   }
 
+  handleItemAdd = () => {
+    this.setState({ isLoading: true }, () => {
+      this.props.onPortionComponentLoadStart();
+      this.getItemDetails()
+    })
+  }
+
   render() {
-    const { items, measures, itemSearchValue, selectedServing } = this.state
+    const { items, measures, itemSearchValue, selectedServing, isLoading } = this.state
     return (
-      <div>
-        <Grid container spacing={24}>
+      <React.Fragment>
+        <Grid
+          container
+          spacing={24}
+          direciton="row"
+          justify="center"
+          alignItems="center"
+        >
           <Grid item>
             <SearchFoodItems
               items={items}
               itemSearchValue={itemSearchValue}
               handleItemSearchInputChange={this.handleItemSearchInputChange}
               handleItemSelection={this.handleItemSelection}
+              isLoading={isLoading}
             />
           </Grid>
 
@@ -149,6 +159,7 @@ class PortionComponent extends React.Component {
             <SelectMeasure
               measures={measures}
               onMeasureSelection={this.handleMeasureSelection}
+              isLoading={isLoading}
             />
           </Grid>
 
@@ -157,6 +168,7 @@ class PortionComponent extends React.Component {
               label='Serving'
               value={selectedServing}
               onChange={this.handleServingChange}
+              disabled={isLoading}
             />
           </Grid>
 
@@ -164,12 +176,14 @@ class PortionComponent extends React.Component {
             <Button
               color='primary'
               variant='contained'
-              onClick={this.handleItemAdd}>
+              onClick={this.handleItemAdd}
+              disabled={isLoading}
+            >
               Add
             </Button>
           </Grid>
         </Grid>
-      </div>
+      </React.Fragment>
     )
   }
 }

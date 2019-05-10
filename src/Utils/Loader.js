@@ -1,22 +1,19 @@
-import React from 'react';
-import BarLoader from 'react-spinners/BarLoader';
+import React from 'react'
+import BeatLoader from 'react-spinners/BeatLoader'
 
 class Loader extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    const { isLoading } = this.props;
+  render () {
+    const { isLoading } = this.props
     return (
       <React.Fragment>
-        <BarLoader
+        <BeatLoader
           loading={isLoading}
-          size={150}
+          size={30}
           sizeUnit={'px'}
         />
       </React.Fragment>
-    );
+    )
   }
 }
 
-export default Loader;
+export default Loader

@@ -1,11 +1,8 @@
-import React from 'react';
-import { Pie, PieChart, Cell } from 'recharts';
+import React from 'react'
+import { Pie, PieChart, Cell } from 'recharts'
 
 class CustomPieChart extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
+  render () {
     const {
       data,
       dataKey,
@@ -15,9 +12,11 @@ class CustomPieChart extends React.Component {
       width,
       height,
       innerRadius,
-      outerRadius } = this.props;
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-    const RADIAN = Math.PI / 180;
+      outerRadius,
+      animationDuration } = this.props
+
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
+    const RADIAN = Math.PI / 180
     return (
       <React.Fragment>
         <PieChart
@@ -32,16 +31,16 @@ class CustomPieChart extends React.Component {
             cy={cy}
             innerRadius={innerRadius}
             outerRadius={outerRadius}
-            animationDuration={300}
+            animationDuration={animationDuration}
             label={({ cx, cy, midAngle, innerRadius, outerRadius, index, value }) => {
-              const radius = outerRadius + 30;
-              const x = cx + radius * Math.cos(-midAngle * RADIAN);
-              const y = cy + radius * Math.sin(-midAngle * RADIAN);
+              const radius = outerRadius + 30
+              const x = cx + radius * Math.cos(-midAngle * RADIAN)
+              const y = cy + radius * Math.sin(-midAngle * RADIAN)
               return (
                 <text x={x} y={y}>
                   {data[index][nameKey]} : {value}
                 </text>
-              );
+              )
             }}
           >
             {
@@ -52,8 +51,8 @@ class CustomPieChart extends React.Component {
           </Pie>
         </PieChart>
       </React.Fragment>
-    );
+    )
   }
 }
 
-export default CustomPieChart;
+export default CustomPieChart

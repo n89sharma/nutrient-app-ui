@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import { meals } from '../Utils/Constants';
 
-class FoodDiaryTable extends React.Component {
+class DailySummaryTable extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -62,15 +62,15 @@ class FoodDiaryTable extends React.Component {
           <TableCell>{totals.carbohydratesTotal}</TableCell>
           <TableCell>{totals.fatsTotal}</TableCell>
           <TableCell>{totals.proteinTotal}</TableCell>
+          <TableCell></TableCell>
         </TableRow>
       </React.Fragment>
     );
   }
 
   render() {
-    const { dailySummary } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <Table>
 
           <TableHead>
@@ -94,10 +94,10 @@ class FoodDiaryTable extends React.Component {
           </TableBody>
 
         </Table>
-      </div>
+      </React.Fragment>
     );
 
   }
 }
 
-export default FoodDiaryTable;
+export default DailySummaryTable;

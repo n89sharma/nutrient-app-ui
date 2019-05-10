@@ -20,10 +20,10 @@ class MealSelection extends React.Component {
   }
 
   render() {
-    const selectedMeals = this.props.selectedMeals;
-    return(
+    const { selectedMeals, isLoading } = this.props;
 
-      <FormControl>
+    return(
+      <FormControl disabled={isLoading}>
         <FormLabel>Meals</FormLabel>
         <FormGroup>
 

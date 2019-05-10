@@ -6,9 +6,9 @@ import CustomDatePicker from '../Utils/CustomDatePicker';
 import Loader from '../Utils/Loader';
 import AddItem from './AddItem';
 import { DailySummary } from './DailySummary';
-import FoodDiaryTable from './FoodDiaryTable';
+import DailySummaryTable from './DailySummaryTable';
 
-class FoodDiary extends React.Component {
+class DailySummaryComponent extends React.Component {
 
   constructor(props) {
     super(props)
@@ -83,15 +83,10 @@ class FoodDiary extends React.Component {
     if (!isLoading) {
       return (
         <React.Fragment>
-          <Grid
-            item
-            xs={12}
-          >
-            <FoodDiaryTable
-              dailySummary={dailySummary}
-              handleDailySummaryItemDeletion={this.handleDailySummaryItemDeletion}
-            />
-          </Grid>
+          <DailySummaryTable
+            dailySummary={dailySummary}
+            handleDailySummaryItemDeletion={this.handleDailySummaryItemDeletion}
+          />
         </React.Fragment>
       );
     }
@@ -101,7 +96,12 @@ class FoodDiary extends React.Component {
     const { date, isLoading } = this.state;
     return (
       <div>
-        <Grid container spacing={24}>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          spacing={24}>
 
           <Grid item>
             <CustomDatePicker
@@ -113,27 +113,20 @@ class FoodDiary extends React.Component {
           <Grid item>
             <AddItem
               handleDailySummaryItemAddition={this.handleDailySummaryItemAddition}
+              dailySummaryTableLoading={isLoading}
             />
           </Grid>
-        </Grid>
 
-        <Grid
-          container
-          spacing={24}
-          alignItems="center"
-          direction="column"
-        >
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid item>
             <Loader isLoading={isLoading} />
           </Grid>
-          {this.renderTable(isLoading)}
+          <Grid item>
+            {this.renderTable(isLoading)}
+          </Grid>
         </Grid>
       </div>
     );
   }
 }
 
-export default FoodDiary;
+export default DailySummaryComponent;
